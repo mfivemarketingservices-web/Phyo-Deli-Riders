@@ -139,7 +139,7 @@
                             <tr>
                                 <th class="p-2.5">Rider အမည်</th>
                                 <th class="p-2.5 text-center">ပို့ပြီး အော်ဒါ အရေအတွက်</th>
-                                <th class="p-2.5 text-right">ဆိုင်သို့ ရှင်းရမည့် ကုန်ဖိုး စုစုပေါင်း</th>
+                                <th class="p-2.5 text-right">ဆိုင်သို့ ရှင်းရမည့် စုစုပေါင်း (Net Pay to Shop)</th>
                                 <th class="p-2.5 text-right">ကောက်ခံရရှိ ဒလီခ စုစုပေါင်း</th>
                             </tr>
                         </thead>
@@ -157,7 +157,7 @@
                             <tr>
                                 <th class="p-3.5">အော်ဒါကုတ် / အမျိုးအစား</th>
                                 <th class="p-3.5">ပေးပို့သူ / လက်ခံသူ</th>
-                                <th class="p-3.5">ပစ္စည်း / ကျသင့်ငွေ</th>
+                                <th class="p-3.5">ပစ္စည်း / ကျသင့်ငွေ / ဆိုင်ရှင်းငွေ</th>
                                 <th class="p-3.5">ပို့ဆောင်မှု / အချိန်</th>
                                 <th class="p-3.5 text-center">လုပ်ငန်းစဉ် အခြေအနေ</th>
                                 <th class="p-3.5">Rider</th>
@@ -280,10 +280,10 @@
                     <div class="md:col-span-2">
                         <label class="text-xs font-bold text-gray-600">ငွေကောက်ခံရမည့် ပုံစံ (Payment Collection Type)</label>
                         <select id="paymentCollectionType" class="w-full p-2 border rounded text-sm mt-1 font-bold text-emerald-800">
-                            <option value="ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်">ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်</option>
-                            <option value="ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်">ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်</option>
-                            <option value="ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်">ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်</option>
-                            <option value="ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်">ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်</option>
+                            <option value="1">1. ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်</option>
+                            <option value="2">2. ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်</option>
+                            <option value="3">3. ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်</option>
+                            <option value="4">4. ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည် (ဆိုင်ရှင်း = ကုန်ဖိုး - ဒလီခ)</option>
                         </select>
                     </div>
 
@@ -349,7 +349,7 @@
                     <p id="riderPersonalCount" class="text-2xl font-bold mt-1">0 စောင်</p>
                 </div>
                 <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-amber-900 shadow-sm">
-                    <p class="text-xs font-bold text-amber-700"><i class="fa-solid fa-store"></i> ဆိုင်သို့ ရှင်းပေးရမည့် ကုန်ဖိုး</p>
+                    <p class="text-xs font-bold text-amber-700"><i class="fa-solid fa-store"></i> ဆိုင်သို့ ရှင်းပေးရမည့် စုစုပေါင်း (Net Pay)</p>
                     <p id="riderPersonalShopPay" class="text-2xl font-bold mt-1">0 MMK</p>
                 </div>
                 <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl text-indigo-900 shadow-sm">
@@ -368,7 +368,7 @@
                             <tr>
                                 <th class="p-3">အော်ဒါကုတ်</th>
                                 <th class="p-3">ပေးပို့သူ / လက်ခံသူ</th>
-                                <th class="p-3">ကုန်ဖိုး / ဒလီခ / ငွေချေစနစ် / ငွေကောက်ခံ ပုံစံ</th>
+                                <th class="p-3">ကုန်ဖိုး / ဒလီခ / ဆိုင်သို့ရှင်းရန်ငွေ</th>
                                 <th class="p-3 text-center">အခြေအနေ</th>
                                 <th class="p-3 text-center">Action / Edit</th>
                             </tr>
@@ -394,13 +394,6 @@
             "ကိုကျော် (ကော်မရှင်)"
         ];
 
-        const collectionOptions = [
-            "1. ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်",
-            "2. ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်",
-            "3. ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်",
-            "4. ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်"
-        ];
-
         let ordersData = [
             {
                 code: "ORD-1008",
@@ -417,7 +410,7 @@
                 itemPrice: "15000",
                 deliveryFee: "1500",
                 paymentMethod: "ငွေသား",
-                collectionType: "ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်",
+                collectionType: "4", // Option 4: ကုန်ဖိုးသာကောက်မည်၊ ဒလီခအား ပေးပို့သူမှပေးမည်
                 speed: "အမြန်ပို့",
                 pickupDateTime: "2026-07-27 / 10:00",
                 deliveryDateTime: "2026-07-27 / 11:30",
@@ -428,6 +421,34 @@
 
         let loggedInRole = null; 
         let currentRiderName = '';
+
+        // Helper Function to Calculate Net Amount to Pay to Shop
+        function calculateShopPay(order) {
+            const price = parseInt(order.itemPrice) || 0;
+            const fee = parseInt(order.deliveryFee) || 0;
+            const type = String(order.collectionType);
+
+            // Option 4 or Option 3: ဒလီခအား ပေးပို့သူ (ဆိုင်) မှ ပေးချေမည် ဆိုပါက ဆိုင်သို့ပြန်ရှင်းငွေမှ ဒလီခ နှုတ်ပေးရမည်
+            if (type === "4" || type.includes("ကုန်ဖိုးသာကောက်ရမည်") || type === "3") {
+                return Math.max(0, price - fee);
+            }
+            // Option 2: ကုန်ဖိုးကောက်ရန်မလိုပါက
+            if (type === "2") {
+                return 0;
+            }
+            // Option 1 (Default): ကုန်ဖိုးနှင့် ဒလီခ လက်ခံသူပေးပါက ကုန်ဖိုးအပြည့် ဆိုင်သို့ပြန်ရှင်းပေးမည်
+            return price;
+        }
+
+        function getCollectionText(typeCode) {
+            switch(String(typeCode)) {
+                case "1": return "ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်";
+                case "2": return "ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်";
+                case "3": return "ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်";
+                case "4": return "ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်";
+                default: return typeCode;
+            }
+        }
 
         function hideAllSections() {
             const sections = ['loginSection', 'chartSection', 'managementSection', 'adminSection', 'supervisorSection', 'riderSection'];
@@ -585,7 +606,7 @@
             renderTables();
         }
 
-        // Rider Edit Order Functionality (including Collection Type)
+        // Rider Edit Order Functionality
         function editOrderByRider(code) {
             const order = ordersData.find(o => o.code === code);
             if (!order) return;
@@ -601,25 +622,22 @@
 
             const collectionPrompt = prompt(
                 `[${code}] အတွက် ငွေကောက်ခံရမည့် ပုံစံ နံပါတ် ရွေးပါ -\n\n` +
-                `1. ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်\n` +
-                `2. ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်\n` +
-                `3. ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်\n` +
-                `4. ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်`, 
-                "1"
+                `1. ကုန်ဖိုးရော ဒလီခပါ လက်ခံသူမှ ပေးမည်\n` +
+                `2. ကုန်ဖိုးမလို၊ ဒလီခအား လက်ခံသူမှ ပေးမည်\n` +
+                `3. ကုန်ဖိုးမလို၊ ဒလီခအား ပေးပို့သူ (ဆိုင်) မှ ပေးမည်\n` +
+                `4. ကုန်ဖိုးသာ ကောက်ရမည်၊ ဒလီခအား ပေးပို့သူ (ဆိုင်) မှ ပေးမည် (ဆိုင်ရှင်း = ကုန်ဖိုး - ဒလီခ)`, 
+                order.collectionType
             );
 
-            if (collectionPrompt !== null) {
-                if (collectionPrompt === "1") order.collectionType = "ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်";
-                else if (collectionPrompt === "2") order.collectionType = "ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား လက်ခံသူမှပေးချေမည်";
-                else if (collectionPrompt === "3") order.collectionType = "ကုန်ဖိုးကောက်ရန်မလို၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်";
-                else if (collectionPrompt === "4") order.collectionType = "ကုန်ဖိုးသာကောက်ရမည်၊ ဒလီခအား ပေးပို့သူမှပေးချေမည်";
+            if (collectionPrompt !== null && ["1","2","3","4"].includes(collectionPrompt.trim())) {
+                order.collectionType = collectionPrompt.trim();
             }
 
             order.itemPrice = newPrice.trim();
             order.deliveryFee = newFee.trim();
             order.paymentMethod = newPaymentMethod.trim();
 
-            alert(`အော်ဒါ [${code}] ၏ အချက်အလက်များနှင့် ငွေကောက်ခံပုံစံ ပြင်ဆင်ပြီးပါပြီ။`);
+            alert(`အော်ဒါ [${code}] ၏ အချက်အလက်များနှင့် တွက်ချက်မှု ပုံစံ ပြင်ဆင်ပြီးပါပြီ။`);
             renderTables();
         }
 
@@ -648,7 +666,7 @@
             switch(status) {
                 case 'Pending': return '⏳ အော်ဒါအပ်နှံ';
                 case 'Assigned': return '🤝 လက်ခံ/Assign';
-                case 'PickedUp': return '📦 ပစ္စည်းယူရန်စောင့်ဆိုင်း';
+                case 'PickedUp': return '📦 ပစ္စည်းယူပြီး';
                 case 'InTransit': return '🛵 စတင်ပို့ဆောင်';
                 case 'Delivered': return '✅ ပို့ဆောင်ပြီး';
                 case 'OnHold': return '🛑 ပို့ရန်ကျန်';
@@ -661,7 +679,7 @@
             switch(status) {
                 case 'Pending': return `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-2 py-0.5 rounded-full">⏳ အော်ဒါအပ်နှံ</span>`;
                 case 'Assigned': return `<span class="bg-indigo-100 text-indigo-800 border border-indigo-300 font-bold px-2 py-0.5 rounded-full">🤝 လက်ခံ/Assign</span>`;
-                case 'PickedUp': return `<span class="bg-blue-100 text-blue-800 border border-blue-300 font-bold px-2 py-0.5 rounded-full">📦 ပစ္စည်းယူရန်စောင့်ဆိုင်း</span>`;
+                case 'PickedUp': return `<span class="bg-blue-100 text-blue-800 border border-blue-300 font-bold px-2 py-0.5 rounded-full">📦 ပစ္စည်းယူပြီး</span>`;
                 case 'InTransit': return `<span class="bg-purple-100 text-purple-800 border border-purple-300 font-bold px-2 py-0.5 rounded-full">🛵 စတင်ပို့ဆောင်</span>`;
                 case 'Delivered': return `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-0.5 rounded-full">✅ ပို့ဆောင်ပြီး</span>`;
                 case 'OnHold': return `<span class="bg-orange-100 text-orange-800 border border-orange-300 font-bold px-2 py-0.5 rounded-full">🛑 ပို့ရန်ကျန်</span>`;
@@ -676,12 +694,13 @@
             if (globalTbody) {
                 globalTbody.innerHTML = '';
                 ordersData.forEach(o => {
+                    const shopPayAmount = calculateShopPay(o);
                     let actionControls = `
                         <select onchange="updateOrderStatus('${o.code}', this.value)" class="p-1 border rounded text-xs font-bold bg-gray-50">
                             <option value="">-- အခြေအနေပြောင်းရန် --</option>
                             <option value="Pending" ${o.status==='Pending'?'selected':''}>⏳ အော်ဒါအပ်နှံ</option>
                             <option value="Assigned" ${o.status==='Assigned'?'selected':''}>🤝 လက်ခံ/Assign</option>
-                            <option value="PickedUp" ${o.status==='PickedUp'?'selected':''}>📦 ပစ္စည်းယူရန်စောင့်ဆိုင်း</option>
+                            <option value="PickedUp" ${o.status==='PickedUp'?'selected':''}>📦 ပစ္စည်းယူပြီး</option>
                             <option value="InTransit" ${o.status==='InTransit'?'selected':''}>🛵 စတင်ပို့ဆောင်</option>
                             <option value="Delivered" ${o.status==='Delivered'?'selected':''}>✅ ပို့ဆောင်ပြီး</option>
                             <option value="OnHold" ${o.status==='OnHold'?'selected':''}>🛑 ပို့ရန်ကျန်</option>
@@ -706,8 +725,9 @@
                         </td>
                         <td class="p-3.5">
                             <p class="font-bold">${o.item}</p>
-                            <p class="text-gray-700">ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> MMK | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b> MMK</p>
-                            <p class="text-[11px] text-indigo-800 font-semibold">💳 ${o.paymentMethod} (${o.collectionType})</p>
+                            <p class="text-gray-700">ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
+                            <p class="text-amber-800 font-bold">🏠 ဆိုင်ရှင်းငွေ: ${shopPayAmount.toLocaleString()} MMK</p>
+                            <p class="text-[11px] text-indigo-800 font-semibold">💳 ${o.paymentMethod} (${getCollectionText(o.collectionType)})</p>
                         </td>
                         <td class="p-3.5">
                             <span class="font-bold text-xs text-amber-700">${o.speed}</span>
@@ -729,7 +749,9 @@
                 allRidersList.forEach(rName => {
                     const completed = ordersData.filter(o => o.rider === rName && o.status === 'Delivered');
                     const count = completed.length;
-                    const shopPay = completed.reduce((sum, o) => sum + (parseInt(o.itemPrice) || 0), 0);
+                    
+                    // Net Amount Calculation for Shop Settlement
+                    const shopPay = completed.reduce((sum, o) => sum + calculateShopPay(o), 0);
                     const feePay = completed.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
 
                     const tr = document.createElement('tr');
@@ -755,7 +777,7 @@
                     const completedMyOrders = myOrders.filter(o => o.status === 'Delivered');
                     document.getElementById('riderPersonalCount').innerText = `${completedMyOrders.length} စောင်`;
                     
-                    const totalShop = completedMyOrders.reduce((sum, o) => sum + (parseInt(o.itemPrice) || 0), 0);
+                    const totalShop = completedMyOrders.reduce((sum, o) => sum + calculateShopPay(o), 0);
                     document.getElementById('riderPersonalShopPay').innerText = `${totalShop.toLocaleString()} MMK`;
                     
                     const totalFee = completedMyOrders.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
@@ -765,10 +787,11 @@
                         riderTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">လက်ရှိတွင် သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ Status Chart Section တွင် သွားရောက် လက်ခံနိုင်ပါသည်။</td></tr>`;
                     } else {
                         myOrders.forEach(o => {
+                            const shopPayAmount = calculateShopPay(o);
                             let actionBtn = `
                                 <select onchange="updateOrderStatus('${o.code}', this.value)" class="p-1 border rounded text-xs font-bold bg-amber-50 text-gray-800">
                                     <option value="Assigned" ${o.status==='Assigned'?'selected':''}>🤝 လက်ခံ/Assign</option>
-                                    <option value="PickedUp" ${o.status==='PickedUp'?'selected':''}>📦 ပစ္စည်းယူရန်စောင့်ဆိုင်း</option>
+                                    <option value="PickedUp" ${o.status==='PickedUp'?'selected':''}>📦 ပစ္စည်းယူပြီး</option>
                                     <option value="InTransit" ${o.status==='InTransit'?'selected':''}>🛵 စတင်ပို့ဆောင်</option>
                                     <option value="Delivered" ${o.status==='Delivered'?'selected':''}>✅ ပို့ဆောင်ပြီး</option>
                                     <option value="OnHold" ${o.status==='OnHold'?'selected':''}>🛑 ပို့ရန်ကျန်</option>
@@ -785,7 +808,8 @@
                                 </td>
                                 <td class="p-3">
                                     <p class="font-bold">ကုန်ဖိုး: ${parseInt(o.itemPrice).toLocaleString()} MMK | ဒလီခ: ${parseInt(o.deliveryFee).toLocaleString()} MMK</p>
-                                    <p class="text-xs text-indigo-900 font-semibold">💳 ${o.paymentMethod} (${o.collectionType})</p>
+                                    <p class="text-amber-800 font-bold">🏠 ဆိုင်သို့ရှင်းရန်ငွေ: ${shopPayAmount.toLocaleString()} MMK</p>
+                                    <p class="text-xs text-indigo-900 font-semibold">💳 ${o.paymentMethod} (${getCollectionText(o.collectionType)})</p>
                                 </td>
                                 <td class="p-3 text-center">${getStatusBadge(o.status)}</td>
                                 <td class="p-3 text-center space-x-1">
