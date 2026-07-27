@@ -57,63 +57,68 @@
     <!-- Main Content Container -->
     <div class="max-w-5xl mx-auto p-4 space-y-6">
 
-        <!-- Contact Support Card -->
-        <div class="bg-white p-5 rounded-2xl shadow-md border border-amber-200">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 whitespace-nowrap">
-                    ရုံးသို့ တိုက်ရိုက် ဆက်သွယ်ရန်
-                </h3>
-                <p class="text-base sm:text-lg text-gray-700 font-bold flex items-center gap-1.5 bg-amber-50 p-3 rounded-xl border border-amber-100 leading-relaxed">
-                    📍 <span><strong>ရုံးလိပ်စာ -</strong> အမှတ် (၃၈/အေ)၊ တောင်ဝိုင်းလမ်း၊ ဈေးကြို၊ တောင်ဝိုင်းရပ်ကွက်၊ မော်လမြိုင်မြို့။</span>
-                </p>
-            </div>
+        <!-- ================= 1. FIRST SCREEN / LOGIN PAGE (With Contact Info) ================= -->
+        <section id="loginSection" class="max-w-2xl mx-auto my-4 space-y-6">
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-                <a href="tel:09978730790" class="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-800 p-3 rounded-xl border border-amber-200 transition font-bold text-sm">
-                    <i class="fa-solid fa-phone text-base"></i>
-                    <span>09978730790</span>
-                </a>
-                <a href="viber://chat?number=%2B959978730790" class="flex items-center justify-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-800 p-3 rounded-xl border border-purple-200 transition font-bold text-sm">
-                    <i class="fa-brands fa-viber text-lg"></i>
-                    <span>Viber Chat</span>
-                </a>
-                <a href="https://t.me/phyo_delivery" target="_blank" class="flex items-center justify-center gap-2 bg-sky-50 hover:bg-sky-100 text-sky-700 p-3 rounded-xl border border-sky-200 transition font-bold text-sm">
-                    <i class="fa-brands fa-telegram text-lg"></i>
-                    <span>Telegram Chat</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- ================= 1. LOGIN SCREEN ================= -->
-        <section id="loginSection" class="max-w-md mx-auto my-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-            <h2 class="text-2xl font-bold text-center text-blue-900 mb-6">စနစ်သို့ ဝင်ရောက်ရန်</h2>
-            
-            <div class="mb-6 pb-6 border-b border-gray-200 space-y-3">
-                <h3 class="text-sm font-bold text-gray-700"><i class="fa-solid fa-user-shield"></i> ရုံးအဖွဲ့ဝင်များ ဝင်ရောက်ရန်</h3>
-                <select id="staffSelect" class="w-full p-2.5 border rounded text-sm font-semibold">
-                    <option value="">-- ရုံးအဖွဲ့ဝင် အမည်ရွေးပါ --</option>
-                    <option value="management" data-pin="1111">အောင်နိုင်ဖြိုး (Management)</option>
-                    <option value="admin" data-pin="2222">မေချစ်ပို (Admin)</option>
-                    <option value="supervisor" data-pin="333">ကိုကို (Supervisor)</option>
-                </select>
-                <input type="password" id="staffPin" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-                <button onclick="loginStaff()" class="w-full bg-blue-900 text-white p-2.5 rounded font-bold text-sm hover:bg-blue-800">ရုံးအဖွဲ့ဝင် Login</button>
+            <!-- Contact Support Card (Only on Login Screen) -->
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-amber-200">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 whitespace-nowrap">
+                        ရုံးသို့ တိုက်ရိုက် ဆက်သွယ်ရန်
+                    </h3>
+                    <p class="text-sm sm:text-base text-gray-700 font-bold flex items-center gap-1.5 bg-amber-50 p-2.5 rounded-xl border border-amber-100 leading-relaxed">
+                        📍 <span><strong>ရုံးလိပ်စာ -</strong> အမှတ် (၃၈/အေ)၊ တောင်ဝိုင်းလမ်း၊ ဈေးကြို၊ တောင်ဝိုင်းရပ်ကွက်၊ မော်လမြိုင်မြို့။</span>
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                    <a href="tel:09978730790" class="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-800 p-2.5 rounded-xl border border-amber-200 transition font-bold text-xs sm:text-sm">
+                        <i class="fa-solid fa-phone text-sm"></i>
+                        <span>09978730790</span>
+                    </a>
+                    <a href="viber://chat?number=%2B959978730790" class="flex items-center justify-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-800 p-2.5 rounded-xl border border-purple-200 transition font-bold text-xs sm:text-sm">
+                        <i class="fa-brands fa-viber text-base"></i>
+                        <span>Viber Chat</span>
+                    </a>
+                    <a href="https://t.me/phyo_delivery" target="_blank" class="flex items-center justify-center gap-2 bg-sky-50 hover:bg-sky-100 text-sky-700 p-2.5 rounded-xl border border-sky-200 transition font-bold text-xs sm:text-sm">
+                        <i class="fa-brands fa-telegram text-base"></i>
+                        <span>Telegram Chat</span>
+                    </a>
+                </div>
             </div>
 
-            <div class="space-y-3">
-                <h3 class="text-sm font-bold text-gray-700"><i class="fa-solid fa-motorcycle"></i> Delivery Rider များ ဝင်ရောက်ရန်</h3>
-                <select id="riderSelect" class="w-full p-2.5 border rounded text-sm font-semibold">
-                    <option value="">-- Rider အမည်ရွေးပါ --</option>
-                    <option value="သန့်စင် (အချိန်ပိုင်း)" data-pin="4444">သန့်စင် (အချိန်ပိုင်း)</option>
-                    <option value="အောင်သူရလှိုင် (အချိန်ပိုင်း)" data-pin="555">အောင်သူရလှိုင် (အချိန်ပိုင်း)</option>
-                    <option value="ရဲထက်ဇော် (အချိန်ပိုင်း)" data-pin="666">ရဲထက်ဇော် (အချိန်ပိုင်း)</option>
-                    <option value="ဝဏ္ဏအောင် (အချိန်ပိုင်း)" data-pin="777">ဝဏ္ဏအောင် (အချိန်ပိုင်း)</option>
-                    <option value="အောင်မြတ်သူ (အချိန်ပိုင်း)" data-pin="888">အောင်မြတ်သူ (အချိန်ပိုင်း)</option>
-                    <option value="ကိုကျော် (ကော်မရှင်)" data-pin="999">ကိုကျော် (ကော်မရှင်)</option>
-                </select>
-                <input type="password" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-                <button onclick="loginRider()" class="w-full bg-amber-500 text-gray-900 p-2.5 rounded font-bold text-sm hover:bg-amber-600">Rider Login</button>
+            <!-- Login Form Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <h2 class="text-2xl font-bold text-center text-blue-900 mb-6">စနစ်သို့ ဝင်ရောက်ရန်</h2>
+                
+                <div class="mb-6 pb-6 border-b border-gray-200 space-y-3">
+                    <h3 class="text-sm font-bold text-gray-700"><i class="fa-solid fa-user-shield"></i> ရုံးအဖွဲ့ဝင်များ ဝင်ရောက်ရန်</h3>
+                    <select id="staffSelect" class="w-full p-2.5 border rounded text-sm font-semibold">
+                        <option value="">-- ရုံးအဖွဲ့ဝင် အမည်ရွေးပါ --</option>
+                        <option value="management" data-pin="1111">အောင်နိုင်ဖြိုး (Management)</option>
+                        <option value="admin" data-pin="2222">မေချစ်ပို (Admin)</option>
+                        <option value="supervisor" data-pin="333">ကိုကို (Supervisor)</option>
+                    </select>
+                    <input type="password" id="staffPin" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" class="w-full p-2.5 border rounded text-sm text-center font-bold">
+                    <button onclick="loginStaff()" class="w-full bg-blue-900 text-white p-2.5 rounded font-bold text-sm hover:bg-blue-800">ရုံးအဖွဲ့ဝင် Login</button>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-gray-700"><i class="fa-solid fa-motorcycle"></i> Delivery Rider များ ဝင်ရောက်ရန်</h3>
+                    <select id="riderSelect" class="w-full p-2.5 border rounded text-sm font-semibold">
+                        <option value="">-- Rider အမည်ရွေးပါ --</option>
+                        <option value="သန့်စင် (အချိန်ပိုင်း)" data-pin="4444">သန့်စင် (အချိန်ပိုင်း)</option>
+                        <option value="အောင်သူရလှိုင် (အချိန်ပိုင်း)" data-pin="555">အောင်သူရလှိုင် (အချိန်ပိုင်း)</option>
+                        <option value="ရဲထက်ဇော် (အချိန်ပိုင်း)" data-pin="666">ရဲထက်ဇော် (အချိန်ပိုင်း)</option>
+                        <option value="ဝဏ္ဏအောင် (အချိန်ပိုင်း)" data-pin="777">ဝဏ္ဏအောင် (အချိန်ပိုင်း)</option>
+                        <option value="အောင်မြတ်သူ (အချိန်ပိုင်း)" data-pin="888">အောင်မြတ်သူ (အချိန်ပိုင်း)</option>
+                        <option value="ကိုကျော် (ကော်မရှင်)" data-pin="999">ကိုကျော် (ကော်မရှင်)</option>
+                    </select>
+                    <input type="password" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
+                    <button onclick="loginRider()" class="w-full bg-amber-500 text-gray-900 p-2.5 rounded font-bold text-sm hover:bg-amber-600">Rider Login</button>
+                </div>
             </div>
+
         </section>
 
         <!-- ================= 2. ORDER STATUS CHART ================= -->
@@ -270,7 +275,6 @@
                         <input type="number" id="deliveryFee" value="1500" placeholder="0" class="w-full p-2 border rounded text-sm mt-1">
                     </div>
 
-                    <!-- NEW: Office Advance Settlement Option -->
                     <div>
                         <label class="text-xs font-bold text-indigo-900">ဆိုင်သို့ ကုန်ဖိုး ရှင်းလင်းသည့် စနစ်</label>
                         <select id="officePaymentStatus" class="w-full p-2 border rounded text-sm mt-1 font-bold bg-indigo-50 text-indigo-900">
@@ -489,7 +493,6 @@
             // If Rider paid shop in cash directly (Rider Cash)
             if (o.officePaymentStatus === 'rider_cash') {
                 if (o.collectionType === "4") {
-                    // Collects Price, but Net Pay to Shop was (Price - Fee), Rider keeps Fee
                     return 0; 
                 }
                 return 0; 
@@ -519,16 +522,6 @@
                 case 'office_later': return '⏳ ရုံးက နောက်မှရှင်းမည်';
                 case 'rider_cash': return '🛵 Rider မှ တခါတည်းစိုက်ရှင်းသည်';
                 default: return status || 'Rider စိုက်ရှင်း';
-            }
-        }
-
-        function getCollectionText(typeCode) {
-            switch(String(typeCode)) {
-                case "1": return "ကုန်ဖိုးနှင့်ဒလီခ လက်ခံသူပေးမည်";
-                case "2": return "ကုန်ဖိုးမလို၊ ဒလီခ လက်ခံသူပေးမည်";
-                case "3": return "ကုန်ဖိုးမလို၊ ဒလီခ ပေးပို့သူပေးမည်";
-                case "4": return "ကုန်ဖိုးသာကောက်မည်၊ ဒလီခ ပေးပို့သူပေးမည်";
-                default: return typeCode;
             }
         }
 
@@ -876,7 +869,6 @@
                 allRidersList.forEach(rName => {
                     const completed = ordersData.filter(o => o.rider === rName && o.status === 'Delivered');
 
-                    // Filter Date Logic
                     const daily = completed.filter(o => {
                         const d = new Date(o.deliveredDateRaw);
                         return d.toDateString() === now.toDateString();
