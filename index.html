@@ -69,15 +69,16 @@
             </div>
 
             <div class="space-y-3">
-                <h3 class="text-sm font-semibold text-gray-600">Rider Access (PIN: 1234)</h3>
-                <select id="riderSelect" class="w-full p-2.5 border rounded text-sm">
-                    <option value="">-- Rider အမည်ရွေးပါ --</option>
-                    <option value="မောင်အောင် (Rider 1)">မောင်အောင် (Rider 1)</option>
-                    <option value="ကျော်ကျော် (Rider 2)">ကျော်ကျော် (Rider 2)</option>
-                </select>
-                <input type="password" maxlength="4" placeholder="4-Digit PIN" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-                <button onclick="loginRider()" class="w-full bg-yellow-500 text-blue-950 p-2.5 rounded font-bold text-sm">Rider ဝင်ရောက်မည်</button>
-            </div>
+    <h3 class="text-sm font-semibold text-gray-600">Rider Access</h3>
+    <select id="riderSelect" class="w-full p-2.5 border rounded text-sm">
+        <option value="">-- Rider အမည်ရွေးပါ --</option>
+        <!-- data-pin တွင် မတူညီသော Password များ သတ်မှတ်ပေးပါ -->
+        <option value="မောင်အောင် (Rider 1)" data-pin="1111">မောင်အောင် (Rider 1)</option>
+        <option value="ကျော်ကျော် (Rider 2)" data-pin="1234">ကျော်ကျော် (Rider 2)</option>
+    </select>
+    <input type="password" maxlength="4" placeholder="4-Digit PIN" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
+    <button onclick="loginRider()" class="w-full bg-yellow-500 text-blue-950 p-2.5 rounded font-bold text-sm">Rider ဝင်ရောက်မည်</button>
+</div>
         </section>
 
         <!-- ================= 2. ORDER STATUS CHART ================= -->
@@ -384,16 +385,22 @@
         }
 
         function loginRider() {
-            const rider = document.getElementById('riderSelect').value;
-            const pin = document.getElementById('riderPin').value;
-            if (rider && pin === '1234') {
-                currentRiderName = rider;
-                document.getElementById('riderDisplayName').innerText = rider;
-                switchRole('rider');
-            } else {
-                alert('Rider အမည်နှင့် PIN (1234) ကို မှန်ကန်စွာ ရိုက်ထည့်ပါ!');
-            }
-        }
+    const riderSelect = document.getElementById('riderSelect');
+    const selectedOption = riderSelect.options[riderSelect.selectedIndex];
+    
+    const riderName = riderSelect.value;
+    const inputPin = document.getElementById('riderPin').value;
+    const correctPin = selectedOption.getAttribute('data-pin'); // Rider အလိုက် သတ်မှတ်ထားသော PIN ကို ယူမည်
+
+    if (riderName && inputPin === correctPin) {
+        currentRiderName = riderName;
+        document.getElementById('riderDisplayName').innerText = riderName;
+        switchRole('rider');
+        document.getElementById('riderPin').value = ''; // PIN input ကို ပြန်ရှင်းမည်
+    } else {
+        alert('Rider အမည် သို့မဟုတ် PIN နံပါတ် မှားယွင်းနေပါသည်!');
+    }
+}
 
         function logout() {
             switchRole('login');
