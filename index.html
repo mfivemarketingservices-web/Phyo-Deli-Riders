@@ -16,64 +16,107 @@
     </style>
 </head>
 
-<body class="m-0 p-0 bg-amber-50 min-h-screen text-gray-800 pt-28">
+<body class="m-0 p-0 bg-amber-50 min-h-screen text-gray-800 pt-20">
 
     <!-- Fixed Navbar -->
     <nav class="fixed top-0 left-0 right-0 w-full bg-amber-500 text-gray-900 px-4 py-3 shadow-md z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-2">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-white p-0.5 shadow flex items-center justify-center overflow-hidden shrink-0">
-                    <i class="fa-solid fa-truck-fast text-xl text-amber-600"></i>
+                    <img src="IMG_20260722_064009_075-removebg-preview.png" alt="Phyo Delivery Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-truck-fast text-base text-amber-600\'></i>';">
                 </div>
-                <h1 class="text-xl sm:text-2xl font-bold flex items-center text-gray-900 leading-tight">
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold flex items-center text-gray-900 leading-tight">
                     ဖြိုး လျင်မြန်စွာပို့ဆောင်ရေး
                 </h1>
             </div>
 
-            <!-- Role Selector -->
-            <div id="roleSelectorContainer" class="hidden flex items-center space-x-2">
-                <span class="text-sm hidden sm:inline text-gray-900 font-bold">Section ရွေးပါ:</span>
-                <select id="roleSelector" onchange="switchRole(this.value)" class="bg-blue-800 text-white text-sm p-2 rounded border border-blue-700 font-bold focus:outline-none">
-                    <option value="login">🔒 Login Screen</option>
-                    <option value="chart">📊 Order Status Chart (အော်ဒါအခြေအနေဇယား)</option>
-                    <option value="management">🏛️ Management (အုပ်ချုပ်စီမံ)</option>
-                    <option value="admin">🖥️ Admin (စီမံခန့်ခွဲသူ)</option>
-                    <option value="supervisor">📱 Supervisor (ကြီးကြပ်ရေးမှူး)</option>
-                    <option value="rider">🛵 Rider (ပို့ဆောင်သူ)</option>
-                </select>
-                <button onclick="logout()" id="logoutBtn" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded font-bold">
-                    <i class="fa-solid fa-right-from-bracket"></i> ထွက်မည်
-                </button>
+            <div class="flex items-center gap-3">
+                <!-- Role Selector (Hidden during login) -->
+                <div id="roleSelectorContainer" class="hidden flex items-center space-x-2">
+                    <select id="roleSelector" onchange="switchRole(this.value)" class="bg-blue-800 text-white text-xs sm:text-sm p-2 rounded border border-blue-700 font-bold focus:outline-none">
+                        <option value="login">🔒 Login Screen</option>
+                        <option value="chart">📊 Order Status Chart</option>
+                        <option value="management">🏛️ Management</option>
+                        <option value="admin">🖥️ Admin</option>
+                        <option value="supervisor">📱 Supervisor</option>
+                        <option value="rider">🛵 Rider Dashboard</option>
+                    </select>
+                    <button onclick="logout()" id="logoutBtn" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded font-bold">
+                        <i class="fa-solid fa-right-from-bracket"></i> ထွက်မည်
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
+    <!-- Moving Marquee Text -->
+    <div class="bg-amber-600 text-white font-bold py-2 overflow-hidden shadow-inner">
+        <marquee behavior="scroll" direction="left" scrollamount="6" class="text-base sm:text-lg tracking-wide">
+            ✨ မြန်ဆန် တိကျ စိတ်ချ ရတာ မော်ရွှေမြိုင် က ဖြိုးဒလီ က နံပါတ် ၁ ပါ ✨
+        </marquee>
+    </div>
+
     <!-- Main Content Container -->
-    <div class="max-w-7xl mx-auto p-4 space-y-6">
+    <div class="max-w-4xl mx-auto p-4 space-y-6">
+
+        <!-- Contact Support Card -->
+        <div class="bg-white p-5 rounded-2xl shadow-md border border-amber-200">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 whitespace-nowrap">
+                    ရုံးသို့ တိုက်ရိုက် ဆက်သွယ်ရန်
+                </h3>
+                <p class="text-base sm:text-lg text-gray-700 font-bold flex items-center gap-1.5 bg-amber-50 p-3 rounded-xl border border-amber-100 leading-relaxed">
+                    📍 <span><strong>ရုံးလိပ်စာ -</strong> အမှတ် (၃၈/အေ)၊ တောင်ဝိုင်းလမ်း၊ ဈေးကြို၊ တောင်ဝိုင်းရပ်ကွက်၊ မော်လမြိုင်မြို့။</span>
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                <a href="tel:09978730790" class="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-800 p-3 rounded-xl border border-amber-200 transition font-bold text-sm">
+                    <i class="fa-solid fa-phone text-base"></i>
+                    <span>09978730790</span>
+                </a>
+                <a href="viber://chat?number=%2B959978730790" class="flex items-center justify-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-800 p-3 rounded-xl border border-purple-200 transition font-bold text-sm">
+                    <i class="fa-brands fa-viber text-lg"></i>
+                    <span>Viber Chat</span>
+                </a>
+                <a href="https://t.me/phyo_delivery" target="_blank" class="flex items-center justify-center gap-2 bg-sky-50 hover:bg-sky-100 text-sky-700 p-3 rounded-xl border border-sky-200 transition font-bold text-sm">
+                    <i class="fa-brands fa-telegram text-lg"></i>
+                    <span>Telegram Chat</span>
+                </a>
+            </div>
+        </div>
 
         <!-- ================= 1. LOGIN SCREEN ================= -->
-        <section id="loginSection" class="max-w-md mx-auto my-12 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+        <section id="loginSection" class="max-w-md mx-auto my-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <h2 class="text-2xl font-bold text-center text-blue-900 mb-6">စနစ်သို့ ဝင်ရောက်ရန်</h2>
             
+            <!-- Staff Login Section -->
             <div class="mb-6 pb-6 border-b border-gray-200 space-y-3">
-                <h3 class="text-sm font-semibold text-gray-600">Staff Access (Master Password: 1234)</h3>
-                <input type="password" id="masterPassword" placeholder="Master Password ရိုက်ထည့်ပါ" class="w-full p-2.5 border rounded text-sm">
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="loginStaff('management')" class="bg-blue-900 text-white p-2 rounded text-xs font-bold">Management</button>
-                    <button onclick="loginStaff('admin')" class="bg-indigo-700 text-white p-2 rounded text-xs font-bold">Admin</button>
-                    <button onclick="loginStaff('supervisor')" class="bg-emerald-700 text-white p-2 rounded text-xs font-bold">Supervisor</button>
-                </div>
+                <h3 class="text-sm font-bold text-gray-700"><i class="fa-solid fa-user-shield"></i> ရုံးအဖွဲ့ဝင်များ ဝင်ရောက်ရန်</h3>
+                <select id="staffSelect" class="w-full p-2.5 border rounded text-sm font-semibold">
+                    <option value="">-- ရုံးအဖွဲ့ဝင် အမည်ရွေးပါ --</option>
+                    <option value="management" data-pin="1111" data-name="အောင်နိုင်ဖြိုး">အောင်နိုင်ဖြိုး (Management)</option>
+                    <option value="admin" data-pin="2222" data-name="မေချစ်ပို">မေချစ်ပို (Admin)</option>
+                    <option value="supervisor" data-pin="333" data-name="ကိုကို">ကိုကို (Supervisor)</option>
+                </select>
+                <input type="password" id="staffPin" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" class="w-full p-2.5 border rounded text-sm text-center font-bold">
+                <button onclick="loginStaff()" class="w-full bg-blue-900 text-white p-2.5 rounded font-bold text-sm hover:bg-blue-800">ရုံးအဖွဲ့ဝင် Login</button>
             </div>
 
+            <!-- Rider Login Section -->
             <div class="space-y-3">
-                <h3 class="text-sm font-semibold text-gray-600">Rider Access</h3>
-                <select id="riderSelect" class="w-full p-2.5 border rounded text-sm">
+                <h3 class="text-sm font-bold text-gray-700"><i class="fa-solid fa-motorcycle"></i> Delivery Rider များ ဝင်ရောက်ရန်</h3>
+                <select id="riderSelect" class="w-full p-2.5 border rounded text-sm font-semibold">
                     <option value="">-- Rider အမည်ရွေးပါ --</option>
-                    <option value="မောင်အောင် (Rider 1)" data-pin="1111">မောင်အောင် (Rider 1)</option>
-                    <option value="ကျော်ကျော် (Rider 2)" data-pin="1234">ကျော်ကျော် (Rider 2)</option>
+                    <option value="သန့်စင် (အချိန်ပိုင်း)" data-pin="4444">သန့်စင် (အချိန်ပိုင်း)</option>
+                    <option value="အောင်သူရလှိုင် (အချိန်ပိုင်း)" data-pin="555">အောင်သူရလှိုင် (အချိန်ပိုင်း)</option>
+                    <option value="ရဲထက်ဇော် (အချိန်ပိုင်း)" data-pin="666">ရဲထက်ဇော် (အချိန်ပိုင်း)</option>
+                    <option value="ဝဏ္ဏအောင် (အချိန်ပိုင်း)" data-pin="777">ဝဏ္ဏအောင် (အချိန်ပိုင်း)</option>
+                    <option value="အောင်မြတ်သူ (အချိန်ပိုင်း)" data-pin="888">အောင်မြတ်သူ (အချိန်ပိုင်း)</option>
+                    <option value="ကိုကျော် (ကော်မရှင်)" data-pin="999">ကိုကျော် (ကော်မရှင်)</option>
                 </select>
-                <input type="password" maxlength="4" placeholder="4-Digit PIN" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-                <button onclick="loginRider()" class="w-full bg-yellow-500 text-blue-950 p-2.5 rounded font-bold text-sm">Rider ဝင်ရောက်မည်</button>
+                <input type="password" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
+                <button onclick="loginRider()" class="w-full bg-amber-500 text-gray-900 p-2.5 rounded font-bold text-sm hover:bg-amber-600">Rider Login</button>
             </div>
         </section>
 
@@ -114,7 +157,7 @@
         <!-- ================= 3. MANAGEMENT ================= -->
         <section id="managementSection" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
-                <h2 class="text-xl font-bold text-blue-900">🏛️ Management (အုပ်ချုပ်စီမံ Dashboard)</h2>
+                <h2 class="text-xl font-bold text-blue-900">🏛️ Management (အောင်နိုင်ဖြိုး)</h2>
                 <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-semibold">Master Control</span>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -129,10 +172,10 @@
             </div>
         </section>
 
-        <!-- ================= 4. ADMIN (NEW FORM UPDATES) ================= -->
+        <!-- ================= 4. ADMIN ================= -->
         <section id="adminSection" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
-                <h2 class="text-xl font-bold text-indigo-900">🖥️ Admin Dispatcher (စီမံခန့်ခွဲသူ Module)</h2>
+                <h2 class="text-xl font-bold text-indigo-900">🖥️ Admin Dispatcher (မေချစ်ပို)</h2>
             </div>
 
             <!-- Order Entry Form -->
@@ -246,8 +289,12 @@
                         <label class="text-xs font-bold text-gray-600">Assign Rider</label>
                         <select id="assignRider" class="w-full p-2 border rounded text-sm mt-1 font-bold">
                             <option value="Unassigned">-- မရွေးသေးပါ (အော်ဒါအပ်နှံ) --</option>
-                            <option value="မောင်အောင် (Rider 1)">မောင်အောင် (Rider 1)</option>
-                            <option value="ကျော်ကျော် (Rider 2)">ကျော်ကျော် (Rider 2)</option>
+                            <option value="သန့်စင် (အချိန်ပိုင်း)">သန့်စင် (အချိန်ပိုင်း)</option>
+                            <option value="အောင်သူရလှိုင် (အချိန်ပိုင်း)">အောင်သူရလှိုင် (အချိန်ပိုင်း)</option>
+                            <option value="ရဲထက်ဇော် (အချိန်ပိုင်း)">ရဲထက်ဇော် (အချိန်ပိုင်း)</option>
+                            <option value="ဝဏ္ဏအောင် (အချိန်ပိုင်း)">ဝဏ္ဏအောင် (အချိန်ပိုင်း)</option>
+                            <option value="အောင်မြတ်သူ (အချိန်ပိုင်း)">အောင်မြတ်သူ (အချိန်ပိုင်း)</option>
+                            <option value="ကိုကျော် (ကော်မရှင်)">ကိုကျော် (ကော်မရှင်)</option>
                         </select>
                     </div>
                 </div>
@@ -261,7 +308,7 @@
         <!-- ================= 5. SUPERVISOR ================= -->
         <section id="supervisorSection" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
-                <h2 class="text-xl font-bold text-emerald-900">📱 Supervisor (ကြီးကြပ်ရေးမှူး Module)</h2>
+                <h2 class="text-xl font-bold text-emerald-900">📱 Supervisor (ကိုကို)</h2>
             </div>
             <div class="bg-white p-4 rounded-lg shadow border">
                 <p class="text-sm font-bold text-gray-700">အော်ဒါများ၏ အခြေအနေ ပြောင်းလဲခြင်းများကို Order Status Chart Section တွင် တိုက်ရိုက် စီမံနိုင်ပါသည်။</p>
@@ -272,7 +319,7 @@
         <section id="riderSection" class="hidden space-y-6">
             <div class="bg-blue-900 text-white p-4 rounded-lg flex justify-between items-center">
                 <div>
-                    <h2 class="font-bold text-lg" id="riderDisplayName">မောင်အောင် (Rider 1)</h2>
+                    <h2 class="font-bold text-lg" id="riderDisplayName">Rider</h2>
                     <p class="text-xs text-blue-200">Active Delivery Rider</p>
                 </div>
             </div>
@@ -321,8 +368,8 @@
                 paymentMethod: "ငွေသား",
                 collectionType: "ကုန်ဖိုးနှင့်ဒလီခအား လက်ခံသူမှပေးချေမည်",
                 speed: "အမြန်ပို့",
-                pickupDateTime: "2026-02-27 / 10:00",
-                deliveryDateTime: "2026-02-27 / 11:30",
+                pickupDateTime: "2026-07-27 / 10:00",
+                deliveryDateTime: "2026-07-27 / 11:30",
                 status: "Pending",
                 rider: "Unassigned"
             }
@@ -346,16 +393,14 @@
         }
 
         function switchRole(role) {
-            // 1. Login မဝင်ထားဘဲ မည်သည့် Section သို့မှ မသွားနိုင်ပါ
             if (role !== 'login' && !loggedInRole) {
                 alert('ကျေးဇူးပြု၍ စနစ်သို့ ဦးစွာ Login ဝင်ရောက်ပါ!');
                 document.getElementById('roleSelector').value = 'login';
                 return;
             }
 
-            // 2. Rider အကောင့်သည် တခြား Admin/Management/Supervisor ဘက်သို့ ကူးကြည့်၍ မရပါ
-            if (loggedInRole === 'rider' && role !== 'rider' && role !== 'login') {
-                alert('Rider အကောင့်ဖြင့် ထို Section သို့ ဝင်ရောက်ခွင့် မရှိပါ။');
+            if (loggedInRole === 'rider' && role !== 'rider' && role !== 'chart' && role !== 'login') {
+                alert('Rider အကောင့်ဖြင့် Management, Admin သို့မဟုတ် Supervisor Section သို့ ဝင်ရောက်ခွင့် မရှိပါ။');
                 document.getElementById('roleSelector').value = 'rider';
                 return;
             }
@@ -379,14 +424,20 @@
             renderTables();
         }
 
-        function loginStaff(role) {
-            const pwd = document.getElementById('masterPassword').value;
-            if (pwd === '1234') {
+        function loginStaff() {
+            const staffSelect = document.getElementById('staffSelect');
+            const selectedOption = staffSelect.options[staffSelect.selectedIndex];
+            
+            const role = staffSelect.value;
+            const inputPin = document.getElementById('staffPin').value;
+            const correctPin = selectedOption ? selectedOption.getAttribute('data-pin') : null;
+
+            if (role && inputPin === correctPin) {
                 loggedInRole = role; 
                 switchRole(role);
-                document.getElementById('masterPassword').value = ''; 
+                document.getElementById('staffPin').value = ''; 
             } else {
-                alert('Master Password မှားယွင်းနေပါသည်!');
+                alert('ရုံးအဖွဲ့ဝင် အမည် သို့မဟုတ် PIN နံပါတ် မှားယွင်းနေပါသည်!');
             }
         }
 
@@ -490,8 +541,8 @@
 
             if (nextStatus === 'Accepted') {
                 let assignedRider = currentRiderName;
-                if (!assignedRider || loggedInRole !== 'rider') {
-                    assignedRider = prompt("တာဝန်ယူမည့် Rider အမည် ရိုက်ထည့်ပါ -", "မောင်အောင် (Rider 1)");
+                if (!assignedRider) {
+                    assignedRider = prompt("တာဝန်ယူမည့် Rider အမည် ရိုက်ထည့်ပါ -", "သန့်စင် (အချိန်ပိုင်း)");
                     if (!assignedRider) return;
                 }
                 order.rider = assignedRider;
