@@ -31,15 +31,15 @@
 
             <!-- Header Action Controls -->
             <div id="headerActions" class="hidden flex items-center gap-2">
-                <button onclick="goToChart()" id="chartBtn" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs sm:text-sm px-3 py-2 rounded-lg font-bold flex items-center gap-1.5 shadow">
+                <button onclick="goToChart()" id="chartBtn" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs sm:text-sm px-3 py-2 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>📊 Status Chart</span>
                 </button>
-                <button onclick="goToMyDashboard()" id="dashboardBtn" class="hidden bg-blue-800 hover:bg-blue-900 text-white text-xs sm:text-sm px-3 py-2 rounded-lg font-bold flex items-center gap-1.5 shadow">
+                <button onclick="goToMyDashboard()" id="dashboardBtn" class="hidden bg-blue-800 hover:bg-blue-900 text-white text-xs sm:text-sm px-3 py-2 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
                     <i class="fa-solid fa-user-gear"></i>
                     <span id="dashboardBtnText">My Dashboard</span>
                 </button>
-                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm px-3 py-2 rounded-lg font-bold flex items-center gap-1 shadow">
+                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm px-3 py-2 rounded-lg font-bold flex items-center gap-1 shadow transition">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>ထွက်မည်</span>
                 </button>
@@ -57,10 +57,10 @@
     <!-- Main Content Container -->
     <div class="max-w-5xl mx-auto p-4 space-y-6">
 
-        <!-- ================= 1. FIRST SCREEN / LOGIN PAGE (With Contact Info) ================= -->
+        <!-- ================= 1. FIRST SCREEN / LOGIN PAGE ================= -->
         <section id="loginSection" class="max-w-2xl mx-auto my-4 space-y-6">
             
-            <!-- Contact Support Card (Only on Login Screen) -->
+            <!-- Contact Support Card -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-amber-200">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                     <h3 class="text-lg sm:text-xl font-bold text-gray-800 whitespace-nowrap">
@@ -100,7 +100,7 @@
                         <option value="supervisor" data-pin="333">ကိုကို (Supervisor)</option>
                     </select>
                     <input type="password" id="staffPin" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-                    <button onclick="loginStaff()" class="w-full bg-blue-900 text-white p-2.5 rounded font-bold text-sm hover:bg-blue-800">ရုံးအဖွဲ့ဝင် Login</button>
+                    <button onclick="loginStaff()" class="w-full bg-blue-900 text-white p-2.5 rounded font-bold text-sm hover:bg-blue-800 transition">ရုံးအဖွဲ့ဝင် Login</button>
                 </div>
 
                 <div class="space-y-3">
@@ -115,7 +115,7 @@
                         <option value="ကိုကျော် (ကော်မရှင်)" data-pin="999">ကိုကျော် (ကော်မရှင်)</option>
                     </select>
                     <input type="password" placeholder="PIN နံပါတ် ရိုက်ထည့်ပါ" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-                    <button onclick="loginRider()" class="w-full bg-amber-500 text-gray-900 p-2.5 rounded font-bold text-sm hover:bg-amber-600">Rider Login</button>
+                    <button onclick="loginRider()" class="w-full bg-amber-500 text-gray-900 p-2.5 rounded font-bold text-sm hover:bg-amber-600 transition">Rider Login</button>
                 </div>
             </div>
 
@@ -133,11 +133,25 @@
                 <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">Live Synchronized</span>
             </div>
 
-            <!-- Rider Overall Summary Table inside Chart -->
-            <div class="bg-white rounded-xl shadow p-4 border border-indigo-100">
-                <h3 class="font-bold text-sm text-indigo-900 mb-3 flex items-center justify-between">
-                    <span><i class="fa-solid fa-users-gear text-amber-600"></i> Rider များ၏ ပို့ဆောင်မှု စာရင်းချုပ် (Daily / Weekly / Monthly)</span>
-                </h3>
+            <!-- Rider Summary Table -->
+            <div class="bg-white rounded-xl shadow p-4 border border-indigo-100 space-y-3">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-2">
+                    <h3 class="font-bold text-sm text-indigo-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-users-gear text-amber-600"></i>
+                        <span>Rider များ၏ ပို့ဆောင်မှု စာရင်းချုပ်</span>
+                    </h3>
+                    <!-- Filter for Months: Up to October -->
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-gray-600">ကြည့်ရှုလိုသည့် လ:</label>
+                        <select id="monthFilter" onchange="renderTables()" class="p-1.5 border rounded text-xs font-bold bg-amber-50 text-indigo-900 border-amber-300">
+                            <option value="7">ဇူလိုင် (July 2026)</option>
+                            <option value="8">ဩဂုတ် (August 2026)</option>
+                            <option value="9">စက်တင်ဘာ (September 2026)</option>
+                            <option value="10">အောက်တိုဘာ (October 2026)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs text-left text-gray-600 border">
                         <thead class="bg-indigo-50 font-bold text-indigo-900 uppercase border-b">
@@ -146,7 +160,7 @@
                                 <th class="p-2.5 text-center">ရုံးတက်/ဆင်း အချိန်</th>
                                 <th class="p-2.5 text-center">ဒီနေ့ အော်ဒါ</th>
                                 <th class="p-2.5 text-center">ဒီအပတ် အော်ဒါ</th>
-                                <th class="p-2.5 text-center">ဒီလ အော်ဒါ</th>
+                                <th class="p-2.5 text-center">ရွေးချယ်ထားသော လအော်ဒါ</th>
                                 <th class="p-2.5 text-right">ရုံးသို့ အပ်ရမည့် စုစုပေါင်းငွေ</th>
                             </tr>
                         </thead>
@@ -157,6 +171,7 @@
                 </div>
             </div>
 
+            <!-- Global Order Table -->
             <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-600">
@@ -332,7 +347,7 @@
                     </div>
                 </div>
 
-                <button onclick="createNewOrder()" class="w-full bg-indigo-600 text-white p-3 rounded text-sm font-bold hover:bg-indigo-700 shadow flex items-center justify-center gap-2">
+                <button onclick="createNewOrder()" class="w-full bg-indigo-600 text-white p-3 rounded text-sm font-bold hover:bg-indigo-700 shadow flex items-center justify-center gap-2 transition">
                     <i class="fa-solid fa-plus-circle"></i> Create Order & Sync
                 </button>
             </div>
@@ -359,16 +374,16 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button id="clockInBtn" onclick="riderClockIn()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
+                    <button id="clockInBtn" onclick="riderClockIn()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg font-bold text-xs shadow flex items-center gap-1.5 transition">
                         <i class="fa-solid fa-right-to-bracket"></i> ရုံးတက်မည် (Clock In)
                     </button>
-                    <button id="clockOutBtn" onclick="riderClockOut()" class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg font-bold text-xs shadow flex items-center gap-1.5 opacity-50 cursor-not-allowed" disabled>
+                    <button id="clockOutBtn" onclick="riderClockOut()" class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg font-bold text-xs shadow flex items-center gap-1.5 opacity-50 cursor-not-allowed transition" disabled>
                         <i class="fa-solid fa-right-from-bracket"></i> ရုံးဆင်းမည် (Clock Out)
                     </button>
                 </div>
             </div>
 
-            <!-- Rider Statistics Cards (Daily, Weekly, Monthly) -->
+            <!-- Rider Statistics Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div class="bg-white p-4 rounded-xl shadow border border-indigo-100 border-l-4 border-l-indigo-600">
                     <p class="text-xs font-bold text-gray-500">📅 ဒီနေ့ ပို့ဆောင်မှု စာရင်း</p>
@@ -389,7 +404,7 @@
                 </div>
             </div>
 
-            <!-- Financial Settlement Card (ရုံးသို့ အပ်ရမည့် စာရင်း) -->
+            <!-- Financial Settlement Card -->
             <div class="bg-amber-100/70 border border-amber-300 p-4 rounded-xl shadow-sm space-y-2">
                 <h3 class="font-bold text-sm text-amber-900 flex items-center justify-between">
                     <span><i class="fa-solid fa-sack-dollar"></i> ရုံးသို့ စာရင်းရှင်း/အပ်နှံရန် ကျန်ရှိသော စုစုပေါင်းငွေ</span>
@@ -437,7 +452,6 @@
             "ကိုကျော် (ကော်မရှင်)"
         ];
 
-        // Rider Attendance State
         let riderAttendance = {
             "သန့်စင် (အချိန်ပိုင်း)": { clockIn: null, clockOut: null },
             "အောင်သူရလှိုင် (အချိန်ပိုင်း)": { clockIn: null, clockOut: null },
@@ -462,13 +476,13 @@
                 item: "မွေးနေ့ကိတ် (1 ခု)",
                 itemPrice: "15000",
                 deliveryFee: "1500",
-                officePaymentStatus: "office_kpay", // office_kpay, office_later, rider_cash
+                officePaymentStatus: "office_kpay",
                 paymentMethod: "ငွေသား",
                 collectionType: "4", 
                 speed: "အမြန်ပို့",
                 pickupDateTime: "2026-07-27 / 10:00",
                 deliveryDateTime: "2026-07-27 / 11:30",
-                deliveredDateRaw: new Date().toISOString(), // Completed Date
+                deliveredDateRaw: new Date().toISOString(),
                 status: "Delivered",
                 rider: "သန့်စင် (အချိန်ပိုင်း)"
             }
@@ -477,31 +491,24 @@
         let loggedInRole = null; 
         let currentRiderName = '';
 
-        // Helper: Calculate how much Rider needs to handover to Office for this order
         function calculateRiderToOfficePay(o) {
             const price = parseInt(o.itemPrice) || 0;
             const fee = parseInt(o.deliveryFee) || 0;
             
-            // If office paid shop via Kpay/Office Advance, Rider collects Cash from Receiver & must return it to Office
             if (o.officePaymentStatus === 'office_kpay' || o.officePaymentStatus === 'office_later') {
-                if (o.collectionType === "1") return price + fee; // Cash Collected = Price + Fee
-                if (o.collectionType === "2") return fee;         // Cash Collected = Fee
-                if (o.collectionType === "4") return price;       // Cash Collected = Price
+                if (o.collectionType === "1") return price + fee;
+                if (o.collectionType === "2") return fee;
+                if (o.collectionType === "4") return price;
                 return fee;
             }
             
-            // If Rider paid shop in cash directly (Rider Cash)
             if (o.officePaymentStatus === 'rider_cash') {
-                if (o.collectionType === "4") {
-                    return 0; 
-                }
                 return 0; 
             }
 
             return 0;
         }
 
-        // Helper Function to Calculate Net Amount to Pay to Shop
         function calculateShopPay(order) {
             const price = parseInt(order.itemPrice) || 0;
             const fee = parseInt(order.deliveryFee) || 0;
@@ -591,7 +598,6 @@
             }
         }
 
-        // Rider Attendance Functions
         function riderClockIn() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -604,7 +610,6 @@
         }
 
         function riderClockOut() {
-            // Check pending office settlements before clocking out
             const myOrders = ordersData.filter(o => o.rider === currentRiderName && o.status === 'Delivered');
             const pendingMoney = myOrders.reduce((sum, o) => sum + calculateRiderToOfficePay(o), 0);
 
@@ -754,7 +759,6 @@
             const order = ordersData.find(o => o.code === code);
             if (!order) return;
 
-            // Enforcement: Rider must clock in first
             if (loggedInRole === 'rider') {
                 const att = riderAttendance[currentRiderName];
                 if (!att || !att.clockIn || att.clockOut) {
@@ -860,8 +864,10 @@
                 });
             }
 
-            // Rider Chart Overall Summary Table (Daily, Weekly, Monthly)
+            // Rider Chart Summary Table with Month Filter (Up to October)
             const summaryTbody = document.getElementById('riderSummaryChartTable');
+            const selectedMonth = parseInt(document.getElementById('monthFilter')?.value || (new Date().getMonth() + 1));
+
             if (summaryTbody) {
                 summaryTbody.innerHTML = '';
                 const now = new Date();
@@ -881,9 +887,10 @@
                         return diffDays <= 7;
                     });
 
+                    // Filter for specific month (e.g. Month 7: July, 8: Aug, 9: Sept, 10: Oct)
                     const monthly = completed.filter(o => {
                         const d = new Date(o.deliveredDateRaw);
-                        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                        return (d.getMonth() + 1) === selectedMonth && d.getFullYear() === 2026;
                     });
 
                     const totalToOfficePay = completed.reduce((sum, o) => sum + calculateRiderToOfficePay(o), 0);
@@ -892,7 +899,7 @@
                     if (att.clockOut) clockStatusText += ` | Out: ${att.clockOut}`;
 
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-indigo-50/50";
+                    tr.className = "hover:bg-indigo-50/50 transition";
                     tr.innerHTML = `
                         <td class="p-2.5 font-bold text-gray-800">${rName}</td>
                         <td class="p-2.5 text-center text-[11px] font-bold ${att.clockIn ? 'text-emerald-700' : 'text-gray-400'}">${clockStatusText}</td>
@@ -905,7 +912,7 @@
                 });
             }
 
-            // Rider Personal Dashboard Update
+            // Rider Personal Dashboard
             if (loggedInRole === 'rider') {
                 const riderTbody = document.getElementById('riderPersonalTableBody');
                 if (riderTbody) {
@@ -915,7 +922,6 @@
 
                     const now = new Date();
 
-                    // Stats Calculations
                     const dailyOrders = completedMyOrders.filter(o => new Date(o.deliveredDateRaw).toDateString() === now.toDateString());
                     const weeklyOrders = completedMyOrders.filter(o => Math.ceil(Math.abs(now - new Date(o.deliveredDateRaw)) / (1000 * 60 * 60 * 24)) <= 7);
                     const monthlyOrders = completedMyOrders.filter(o => new Date(o.deliveredDateRaw).getMonth() === now.getMonth());
@@ -929,7 +935,6 @@
                     document.getElementById('riderMonthlyCount').innerText = `${monthlyOrders.length} စောင်`;
                     document.getElementById('riderMonthlyFee').innerText = `ဒလီခ: ${monthlyOrders.reduce((sum, o) => sum + parseInt(o.deliveryFee||0), 0).toLocaleString()} MMK`;
 
-                    // Pending Office Settlement Total
                     const pendingOfficeTotal = completedMyOrders.reduce((sum, o) => sum + calculateRiderToOfficePay(o), 0);
                     document.getElementById('riderPendingSettlement').innerText = `${pendingOfficeTotal.toLocaleString()} MMK`;
 
