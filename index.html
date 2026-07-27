@@ -1,7 +1,4 @@
-<html>
-        <head><title>Downloaded HTML</title></head>
-        <body>
-            <pre style="white-space: pre-wrap; word-wrap: break-word;"><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="my">
 <head>
     <meta charset="UTF-8">
@@ -34,7 +31,7 @@
             </div>
 
             <!-- Role Selector -->
-            <div id="roleSelectorContainer" class="flex items-center space-x-2">
+            <div id="roleSelectorContainer" class="hidden flex items-center space-x-2">
                 <span class="text-sm hidden sm:inline text-gray-900 font-bold">Section ရွေးပါ:</span>
                 <select id="roleSelector" onchange="switchRole(this.value)" class="bg-blue-800 text-white text-sm p-2 rounded border border-blue-700 font-bold focus:outline-none">
                     <option value="login">🔒 Login Screen</option>
@@ -69,16 +66,15 @@
             </div>
 
             <div class="space-y-3">
-    <h3 class="text-sm font-semibold text-gray-600">Rider Access</h3>
-    <select id="riderSelect" class="w-full p-2.5 border rounded text-sm">
-        <option value="">-- Rider အမည်ရွေးပါ --</option>
-        <!-- data-pin တွင် မတူညီသော Password များ သတ်မှတ်ပေးပါ -->
-        <option value="မောင်အောင် (Rider 1)" data-pin="1111">မောင်အောင် (Rider 1)</option>
-        <option value="ကျော်ကျော် (Rider 2)" data-pin="1234">ကျော်ကျော် (Rider 2)</option>
-    </select>
-    <input type="password" maxlength="4" placeholder="4-Digit PIN" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
-    <button onclick="loginRider()" class="w-full bg-yellow-500 text-blue-950 p-2.5 rounded font-bold text-sm">Rider ဝင်ရောက်မည်</button>
-</div>
+                <h3 class="text-sm font-semibold text-gray-600">Rider Access</h3>
+                <select id="riderSelect" class="w-full p-2.5 border rounded text-sm">
+                    <option value="">-- Rider အမည်ရွေးပါ --</option>
+                    <option value="မောင်အောင် (Rider 1)" data-pin="1111">မောင်အောင် (Rider 1)</option>
+                    <option value="ကျော်ကျော် (Rider 2)" data-pin="1234">ကျော်ကျော် (Rider 2)</option>
+                </select>
+                <input type="password" maxlength="4" placeholder="4-Digit PIN" id="riderPin" class="w-full p-2.5 border rounded text-sm text-center font-bold">
+                <button onclick="loginRider()" class="w-full bg-yellow-500 text-blue-950 p-2.5 rounded font-bold text-sm">Rider ဝင်ရောက်မည်</button>
+            </div>
         </section>
 
         <!-- ================= 2. ORDER STATUS CHART ================= -->
@@ -146,13 +142,11 @@
                 </h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <!-- အော်ဒါကုတ် -->
                     <div>
                         <label class="text-xs font-bold text-gray-600">အော်ဒါကုတ်</label>
                         <input type="text" id="orderCode" placeholder="ORD-1001" class="w-full p-2 border rounded text-sm mt-1">
                     </div>
 
-                    <!-- မိတ်ဖက် / အခြား ခွဲခြားခြင်း -->
                     <div>
                         <label class="text-xs font-bold text-gray-600">အော်ဒါ အမျိုးအစား</label>
                         <select id="orderType" onchange="toggleOrderTypeForm()" class="w-full p-2 border rounded text-sm mt-1 font-bold bg-gray-50">
@@ -161,7 +155,6 @@
                         </select>
                     </div>
 
-                    <!-- မိတ်ဖက်ဖြစ်ပါက ရွေးချယ်ရန် -->
                     <div id="partnerSelectGroup">
                         <label class="text-xs font-bold text-gray-600">မိတ်ဖက်ဆိုင် ရွေးရန်</label>
                         <select id="partnerSelect" class="w-full p-2 border rounded text-sm mt-1 font-bold">
@@ -171,7 +164,6 @@
                         </select>
                     </div>
 
-                    <!-- အမြန်နှုန်း -->
                     <div>
                         <label class="text-xs font-bold text-gray-600">အမြန်နှုန်း (Speed Type)</label>
                         <select id="deliverySpeed" class="w-full p-2 border rounded text-sm mt-1 font-bold text-indigo-700">
@@ -182,7 +174,6 @@
                     </div>
                 </div>
 
-                <!-- ပေးပို့သူ အချက်အလက် (အခြား ရွေးမှ ပေါ်မည်) -->
                 <div id="senderFieldsGroup" class="hidden border p-3 rounded bg-amber-50/50 space-y-2">
                     <h4 class="text-xs font-bold text-amber-900 border-b pb-1"><i class="fa-solid fa-user"></i> ပေးပို့သူ (Sender Info)</h4>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -193,7 +184,6 @@
                     </div>
                 </div>
 
-                <!-- လက်ခံသူ အချက်အလက် -->
                 <div class="border p-3 rounded bg-blue-50/50 space-y-2">
                     <h4 class="text-xs font-bold text-blue-900 border-b pb-1"><i class="fa-solid fa-location-dot"></i> လက်ခံသူ (Receiver Info)</h4>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -204,7 +194,6 @@
                     </div>
                 </div>
 
-                <!-- ပစ္စည်း၊ ငွေကြေး နှင့် ရက်စွဲများ -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                         <label class="text-xs font-bold text-gray-600">ကုန်ပစ္စည်းအမျိုးအမည် နှင့် အရေအတွက်</label>
@@ -237,7 +226,6 @@
                         </select>
                     </div>
 
-                    <!-- Pickup & Delivery Timing -->
                     <div>
                         <label class="text-xs font-bold text-gray-600">ပစ္စည်းကောက်ယူမည့် ရက်/အချိန်</label>
                         <div class="flex gap-1 mt-1">
@@ -315,7 +303,6 @@
 
     <!-- JavaScript Data & Logic -->
     <script>
-        // Store Orders with updated schema
         let ordersData = [
             {
                 code: "ORD-1008",
@@ -341,7 +328,7 @@
             }
         ];
 
-        let currentUserRole = 'login';
+        let loggedInRole = null; 
         let currentRiderName = '';
 
         function toggleOrderTypeForm() {
@@ -359,55 +346,75 @@
         }
 
         function switchRole(role) {
-            currentUserRole = role;
+            // 1. Login မဝင်ထားဘဲ မည်သည့် Section သို့မှ မသွားနိုင်ပါ
+            if (role !== 'login' && !loggedInRole) {
+                alert('ကျေးဇူးပြု၍ စနစ်သို့ ဦးစွာ Login ဝင်ရောက်ပါ!');
+                document.getElementById('roleSelector').value = 'login';
+                return;
+            }
+
+            // 2. Rider အကောင့်သည် တခြား Admin/Management/Supervisor ဘက်သို့ ကူးကြည့်၍ မရပါ
+            if (loggedInRole === 'rider' && role !== 'rider' && role !== 'login') {
+                alert('Rider အကောင့်ဖြင့် ထို Section သို့ ဝင်ရောက်ခွင့် မရှိပါ။');
+                document.getElementById('roleSelector').value = 'rider';
+                return;
+            }
+
             const sections = ['loginSection', 'chartSection', 'managementSection', 'adminSection', 'supervisorSection', 'riderSection'];
             sections.forEach(s => document.getElementById(s).classList.add('hidden'));
+
+            const container = document.getElementById('roleSelectorContainer');
 
             if (role !== 'login') {
                 document.getElementById(`${role}Section`).classList.remove('hidden');
                 document.getElementById('logoutBtn').classList.remove('hidden');
+                container.classList.remove('hidden');
             } else {
                 document.getElementById('loginSection').classList.remove('hidden');
                 document.getElementById('logoutBtn').classList.add('hidden');
+                container.classList.add('hidden');
             }
-            document.getElementById('roleSelector').value = role;
 
+            document.getElementById('roleSelector').value = role;
             renderTables();
         }
 
         function loginStaff(role) {
             const pwd = document.getElementById('masterPassword').value;
             if (pwd === '1234') {
+                loggedInRole = role; 
                 switchRole(role);
+                document.getElementById('masterPassword').value = ''; 
             } else {
                 alert('Master Password မှားယွင်းနေပါသည်!');
             }
         }
 
         function loginRider() {
-    const riderSelect = document.getElementById('riderSelect');
-    const selectedOption = riderSelect.options[riderSelect.selectedIndex];
-    
-    const riderName = riderSelect.value;
-    const inputPin = document.getElementById('riderPin').value;
-    const correctPin = selectedOption.getAttribute('data-pin'); // Rider အလိုက် သတ်မှတ်ထားသော PIN ကို ယူမည်
+            const riderSelect = document.getElementById('riderSelect');
+            const selectedOption = riderSelect.options[riderSelect.selectedIndex];
+            
+            const riderName = riderSelect.value;
+            const inputPin = document.getElementById('riderPin').value;
+            const correctPin = selectedOption ? selectedOption.getAttribute('data-pin') : null;
 
-    if (riderName && inputPin === correctPin) {
-        currentRiderName = riderName;
-        document.getElementById('riderDisplayName').innerText = riderName;
-        switchRole('rider');
-        document.getElementById('riderPin').value = ''; // PIN input ကို ပြန်ရှင်းမည်
-    } else {
-        alert('Rider အမည် သို့မဟုတ် PIN နံပါတ် မှားယွင်းနေပါသည်!');
-    }
-}
-
-        function logout() {
-            switchRole('login');
-            currentRiderName = '';
+            if (riderName && inputPin === correctPin) {
+                loggedInRole = 'rider'; 
+                currentRiderName = riderName;
+                document.getElementById('riderDisplayName').innerText = riderName;
+                switchRole('rider');
+                document.getElementById('riderPin').value = '';
+            } else {
+                alert('Rider အမည် သို့မဟုတ် PIN နံပါတ် မှားယွင်းနေပါသည်!');
+            }
         }
 
-        // Admin တင်သော အော်ဒါအသစ်
+        function logout() {
+            loggedInRole = null;
+            currentRiderName = '';
+            switchRole('login');
+        }
+
         function createNewOrder() {
             const codeInput = document.getElementById('orderCode').value.trim();
             const code = codeInput !== "" ? codeInput : "ORD-" + Math.floor(1000 + Math.random() * 9000);
@@ -483,7 +490,7 @@
 
             if (nextStatus === 'Accepted') {
                 let assignedRider = currentRiderName;
-                if (!assignedRider || currentUserRole !== 'rider') {
+                if (!assignedRider || loggedInRole !== 'rider') {
                     assignedRider = prompt("တာဝန်ယူမည့် Rider အမည် ရိုက်ထည့်ပါ -", "မောင်အောင် (Rider 1)");
                     if (!assignedRider) return;
                 }
@@ -519,6 +526,7 @@
 
         function renderTables() {
             const globalTbody = document.getElementById('globalOrderTableBody');
+            if(!globalTbody) return;
             globalTbody.innerHTML = '';
 
             ordersData.forEach(o => {
@@ -539,7 +547,6 @@
                     actionBtn = `<span class="text-emerald-600 font-bold">ပြီးစီးပါပြီ</span>`;
                 }
 
-                // GPS display logic
                 const senderGpsBtn = o.senderGps ? `<a href="${o.senderGps}" target="_blank" class="text-blue-600 underline text-xs"><i class="fa-solid fa-location-crosshairs"></i> GPS</a>` : '';
                 const receiverGpsBtn = o.receiverGps ? `<a href="${o.receiverGps}" target="_blank" class="text-blue-600 underline text-xs"><i class="fa-solid fa-location-crosshairs"></i> GPS</a>` : '';
 
@@ -572,9 +579,9 @@
                 globalTbody.appendChild(tr);
             });
 
-            // Rider Personal Table
-            if (currentUserRole === 'rider') {
+            if (loggedInRole === 'rider') {
                 const riderTbody = document.getElementById('riderPersonalTableBody');
+                if(!riderTbody) return;
                 riderTbody.innerHTML = '';
                 const myOrders = ordersData.filter(o => o.rider === currentRiderName);
 
@@ -602,6 +609,4 @@
         }
     </script>
 </body>
-</html></pre>
-        </body>
-    </html>
+</html>
