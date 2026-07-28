@@ -153,7 +153,7 @@
                 </div>
             </div>
 
-            <!-- 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary (New Section in Status) -->
+            <!-- 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary -->
             <div class="bg-white rounded-xl shadow p-4 border border-purple-100">
                 <h3 class="font-bold text-sm text-purple-900 mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-store text-purple-600"></i> 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary
@@ -165,9 +165,8 @@
                                 <th class="p-2.5">ဆိုင် / ပေးပို့သူ အမည်</th>
                                 <th class="p-2.5 text-center">အော်ဒါ အရေအတွက်</th>
                                 <th class="p-2.5 text-right">ကုန်ဖိုး စုစုပေါင်း</th>
-                                <th class="p-2.5 text-right bg-rose-100 text-rose-900">ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး စုစုပေါင်း</th>
+                                <th class="p-2.5 text-right bg-rose-100 text-rose-900">ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ဒလီခနှုတ်ပြီး)</th>
                                 <th class="p-2.5 text-right">ဒလီခ စုစုပေါင်း</th>
-                                <th class="p-2.5 text-right bg-amber-100 text-amber-900">ဆိုင်များမှ တောင်းခံရမည့် ဒလီခ စုစုပေါင်း</th>
                             </tr>
                         </thead>
                         <tbody id="shopSummaryChartTable" class="divide-y font-semibold">
@@ -346,7 +345,6 @@
                             <option value="ကုန်ဖိုးသာကောက်ရမည်">ကုန်ဖိုးသာကောက်ရမည်</option>
                             <option value="ဒလီခသာကောက်ရမည်">ဒလီခသာကောက်ရမည်</option>
                             <option value="ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး">ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး</option>
-
                             <option value="ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး">ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး</option>
                         </select>
                     </div>
@@ -489,14 +487,10 @@
                     <p class="text-xs font-bold text-emerald-800"><i class="fa-solid fa-sack-dollar"></i> ရုံးအပ်ရန် ဒလီခ</p>
                     <p id="riderPersonalFeeHandover" class="text-xl font-bold mt-1 text-emerald-900">0 MMK</p>
                 </div>
-                <!-- New Shop Specific Rider Cards -->
+                <!-- Shop Specific Cards -->
                 <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-rose-900 shadow-sm">
-                    <p class="text-xs font-bold text-rose-700"><i class="fa-solid fa-store"></i> ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး</p>
+                    <p class="text-xs font-bold text-rose-700"><i class="fa-solid fa-store"></i> ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ဒလီခနှုတ်ပြီး)</p>
                     <p id="riderPersonalPendingShopPay" class="text-xl font-bold mt-1 text-rose-900">0 MMK</p>
-                </div>
-                <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl text-indigo-900 shadow-sm">
-                    <p class="text-xs font-bold text-indigo-700"><i class="fa-solid fa-file-invoice-dollar"></i> ဆိုင်များမှ တောင်းရမည့် ဒလီခ</p>
-                    <p id="riderPersonalPendingShopFee" class="text-xl font-bold mt-1 text-indigo-900">0 MMK</p>
                 </div>
             </div>
 
@@ -637,35 +631,46 @@
             return price;
         }
 
-        // ဝန်ထမ်းရှင်းကုန်ဖိုး (ဝန်ထမ်း မည်သည့်နည်းလမ်းဖြင့်မဆို ရှင်းခဲ့သည့် ပစ္စည်းဖိုး)
+        // ဝန်ထမ်းရှင်း ကုန်ဖိုး (ဒလီခ နှုတ်ရန်လိုပါက နှုတ်ပြီး ရှင်းပေးသည့်ပမာဏ)
         function calculateStaffPrePayItem(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
 
             const price = parseInt(order.itemPrice) || 0;
+            const fee = parseInt(order.deliveryFee) || 0;
             const who = order.shopPrePayer || "";
+            const pType = order.paymentType || "";
+
             if (who.includes("ဝန်ထမ်း")) {
+                if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး") {
+                    return Math.max(0, price - fee);
+                }
                 return price;
             }
             return 0;
         }
 
-        // ရုံးရှင်းကုန်ဖိုး (ရုံးမှ မည်သည့်နည်းလမ်းဖြင့်မဆို ရှင်းခဲ့သည့် ပစ္စည်းဖိုး)
+        // ရုံးရှင်း ကုန်ဖိုး
         function calculateOfficePrePayItem(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
 
             const price = parseInt(order.itemPrice) || 0;
+            const fee = parseInt(order.deliveryFee) || 0;
             const who = order.shopPrePayer || "";
+            const pType = order.paymentType || "";
+
             if (who.includes("ရုံး")) {
+                if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး") {
+                    return Math.max(0, price - fee);
+                }
                 return price;
             }
             return 0;
         }
 
-        // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး = ကောက်ခံရရှိ ကုန်ဖိုး - ဝန်ထမ်းရှင်း ကုန်ဖိုး
+        // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး = ဝယ်သူထံမှ ကောက်ခံရရှိ ကုန်ဖိုး - ဝန်ထမ်းဆိုင်သို့ ကြိုရှင်းပေးခဲ့သည့် ကုန်ဖိုး
         function calculateRiderHandoverToOffice(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
 
-            // ဝယ်သူမှ Kpay / Wave ဖြင့် ပေးချေထားပါက Rider ထံ Cash မရှိပါ
             if (order.payment === "Kpay" || order.payment === "Wave") {
                 return 0;
             }
@@ -696,12 +701,10 @@
             const pType = order.paymentType || "";
             const payMethod = order.payment || "";
 
-            // ကောက်ခံရန် မလိုပါက 0 ပြန်မည်
             if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
             }
 
-            // Kpay / Wave ဖြင့် ပေးပါက Rider လက်ထဲ Cash မကျန်နိုင်ပါ
             if (payMethod === "Kpay" || payMethod === "Wave") {
                 return 0;
             }
@@ -709,28 +712,19 @@
             return fee;
         }
 
-        // 🏪 ဆိုင်သို့ ရှင်းရန်ကျန် ကုန်ဖိုး (Pending Shop Pre-Pay)
+        // 🏪 ဆိုင်သို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ကုန်ဖိုးသာကောက်ရမည်ဖြစ်ပါက ဒလီခ နှုတ်ပေးမည်)
         function calculatePendingShopPay(order) {
             const price = parseInt(order.itemPrice) || 0;
-            const payerType = order.payerType || "";
-            const shopPrePayer = order.shopPrePayer || "";
-
-            if (payerType === "နောက်မှရှင်းမည်" || shopPrePayer.includes("ရုံး")) {
-                return price;
-            }
-            return 0;
-        }
-
-        // 🏪 ဆိုင်ထံမှ ပြန်တောင်းရမည့် ဒလီခ (Pending Shop Delivery Fee)
-        function calculatePendingShopFee(order) {
             const fee = parseInt(order.deliveryFee) || 0;
             const payerType = order.payerType || "";
             const shopPrePayer = order.shopPrePayer || "";
             const pType = order.paymentType || "";
 
-            if ((payerType === "နောက်မှရှင်းမည်" || shopPrePayer.includes("ရုံး")) && 
-                (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး")) {
-                return fee;
+            if (payerType === "နောက်မှရှင်းမည်" || shopPrePayer.includes("ရုံး")) {
+                if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး") {
+                    return Math.max(0, price - fee);
+                }
+                return price;
             }
             return 0;
         }
@@ -747,7 +741,7 @@
             }
         }
 
-        // ဆိုင်သို့ ရှင်းပေးခဲ့သည့် စနစ် (Shop Pre-Pay Display) Badge
+        // ဆိုင်သို့ ရှင်းပေးခဲ့သည့် စနစ် Badge
         function getShopPrePayBadge(shopPrePayer, payerType) {
             const who = shopPrePayer || 'ဝန်ထမ်း(Rider)';
             const type = payerType || 'ငွေသား';
@@ -1211,7 +1205,7 @@
                 });
             }
 
-            // 🏪 Shop Summary Chart (Dynamic render for each unique shop)
+            // 🏪 Shop Summary Chart
             const shopSummaryTbody = document.getElementById('shopSummaryChartTable');
             if (shopSummaryTbody) {
                 shopSummaryTbody.innerHTML = '';
@@ -1219,14 +1213,13 @@
                 const uniqueShops = [...new Set(ordersData.map(o => o.sender))];
                 
                 if (uniqueShops.length === 0) {
-                    shopSummaryTbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">ဆိုင်များ စာရင်း မရှိသေးပါ။</td></tr>`;
+                    shopSummaryTbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-gray-400 italic">ဆိုင်များ စာရင်း မရှိသေးပါ။</td></tr>`;
                 } else {
                     uniqueShops.forEach(sName => {
                         const shopOrders = ordersData.filter(o => o.sender === sName && o.status !== 'အော်ဒါပယ်ဖျက်');
                         const totalItem = shopOrders.reduce((sum, o) => sum + (parseInt(o.itemPrice) || 0), 0);
                         const pendingPay = shopOrders.reduce((sum, o) => sum + calculatePendingShopPay(o), 0);
                         const totalFee = shopOrders.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
-                        const pendingFee = shopOrders.reduce((sum, o) => sum + calculatePendingShopFee(o), 0);
 
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-purple-50/50";
@@ -1236,7 +1229,6 @@
                             <td class="p-2.5 text-right font-bold text-gray-700">${totalItem.toLocaleString()} MMK</td>
                             <td class="p-2.5 text-right font-bold text-rose-800 bg-rose-50">${pendingPay.toLocaleString()} MMK</td>
                             <td class="p-2.5 text-right font-bold text-gray-700">${totalFee.toLocaleString()} MMK</td>
-                            <td class="p-2.5 text-right font-bold text-amber-900 bg-amber-50">${pendingFee.toLocaleString()} MMK</td>
                         `;
                         shopSummaryTbody.appendChild(tr);
                     });
@@ -1307,9 +1299,6 @@
 
                     const totalPendingShopPay = myOrders.reduce((sum, o) => sum + calculatePendingShopPay(o), 0);
                     document.getElementById('riderPersonalPendingShopPay').innerText = `${totalPendingShopPay.toLocaleString()} MMK`;
-
-                    const totalPendingShopFee = myOrders.reduce((sum, o) => sum + calculatePendingShopFee(o), 0);
-                    document.getElementById('riderPersonalPendingShopFee').innerText = `${totalPendingShopFee.toLocaleString()} MMK`;
 
                     if (myOrders.length === 0) {
                         riderTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
