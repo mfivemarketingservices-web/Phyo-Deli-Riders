@@ -153,6 +153,30 @@
                 </div>
             </div>
 
+            <!-- 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary (New Section in Status) -->
+            <div class="bg-white rounded-xl shadow p-4 border border-purple-100">
+                <h3 class="font-bold text-sm text-purple-900 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-store text-purple-600"></i> 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-gray-600 border">
+                        <thead class="bg-purple-50 font-bold text-purple-900 uppercase border-b">
+                            <tr>
+                                <th class="p-2.5">ဆိုင် / ပေးပို့သူ အမည်</th>
+                                <th class="p-2.5 text-center">အော်ဒါ အရေအတွက်</th>
+                                <th class="p-2.5 text-right">ကုန်ဖိုး စုစုပေါင်း</th>
+                                <th class="p-2.5 text-right bg-rose-100 text-rose-900">ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး စုစုပေါင်း</th>
+                                <th class="p-2.5 text-right">ဒလီခ စုစုပေါင်း</th>
+                                <th class="p-2.5 text-right bg-amber-100 text-amber-900">ဆိုင်များမှ တောင်းခံရမည့် ဒလီခ စုစုပေါင်း</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shopSummaryChartTable" class="divide-y font-semibold">
+                            <!-- Dynamic Shop Summary Render -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-200">
                 <div class="p-4 border-b bg-gray-50 flex items-center justify-between">
                     <h3 class="font-bold text-gray-700 text-sm">အော်ဒါအားလုံး စာရင်း</h3>
@@ -440,7 +464,7 @@
             </div>
 
             <!-- Rider Personal Summary Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl text-emerald-900 shadow-sm">
                     <p class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-circle-check"></i> ပို့ဆောင်ပြီး အော်ဒါ</p>
                     <p id="riderPersonalCount" class="text-xl font-bold mt-1">0 စောင်</p>
@@ -464,6 +488,15 @@
                 <div class="bg-emerald-100 border border-emerald-300 p-3.5 rounded-xl text-emerald-950 shadow-sm">
                     <p class="text-xs font-bold text-emerald-800"><i class="fa-solid fa-sack-dollar"></i> ရုံးအပ်ရန် ဒလီခ</p>
                     <p id="riderPersonalFeeHandover" class="text-xl font-bold mt-1 text-emerald-900">0 MMK</p>
+                </div>
+                <!-- New Shop Specific Rider Cards -->
+                <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-rose-900 shadow-sm">
+                    <p class="text-xs font-bold text-rose-700"><i class="fa-solid fa-store"></i> ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး</p>
+                    <p id="riderPersonalPendingShopPay" class="text-xl font-bold mt-1 text-rose-900">0 MMK</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl text-indigo-900 shadow-sm">
+                    <p class="text-xs font-bold text-indigo-700"><i class="fa-solid fa-file-invoice-dollar"></i> ဆိုင်များမှ တောင်းရမည့် ဒလီခ</p>
+                    <p id="riderPersonalPendingShopFee" class="text-xl font-bold mt-1 text-indigo-900">0 MMK</p>
                 </div>
             </div>
 
@@ -641,29 +674,47 @@
         }
 
         // ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း
-        // (ကောက်ခံရရှိ ဒလီခ - ရုံးသို့ Kpay/Wave ဖြင့် တိုက်ရိုက်ဝင်ငွေများ - ဆိုင်မှ နောက်မှ ပြန်တောင်းရမည့် ဒလီခများ ကို နှုတ်ပါမည်)
         function calculateRiderFeeHandoverToOffice(order) {
             const fee = parseInt(order.deliveryFee) || 0;
             const pType = order.paymentType || "";
             const payMethod = order.payment || "";
             const payerType = order.payerType || "";
 
-            // 1. ဝယ်ယူသူထံမှ ဒလီခ မကောက်ရသော အော်ဒါ သို့မဟုတ် ရုံးသို့ ဒလီခတိုက်ရိုက်ရှင်းပြီးဖြစ်သော အော်ဒါများ
             if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
             }
 
-            // 2. ရုံးသို့ Kpay / Wave ဖြင့် တိုက်ရိုက်ဝင်သော ဒလီခများ (Rider ထံ လက်ငင်းမရှိပါ)
             if (payMethod === "Kpay" || payMethod === "Wave") {
                 return 0;
             }
 
-            // 3. ဆိုင်တွင် နောက်မှပြန်တောင်းရမည့် ဒလီခ (ဆိုင်သို့ နောက်မှရှင်းမည် စနစ်)
             if (payerType === "နောက်မှရှင်းမည်") {
                 return 0;
             }
 
             return fee;
+        }
+
+        // 🏪 ဆိုင်သို့ ရှင်းရန်ကျန် ကုန်ဖိုး (Pending Shop Pre-Pay)
+        function calculatePendingShopPay(order) {
+            const price = parseInt(order.itemPrice) || 0;
+            const payerType = order.payerType || "";
+            if (payerType === "နောက်မှရှင်းမည်") {
+                return price;
+            }
+            return 0;
+        }
+
+        // 🏪 ဆိုင်ထံမှ ပြန်တောင်းရမည့် ဒလီခ (Pending Shop Delivery Fee)
+        function calculatePendingShopFee(order) {
+            const fee = parseInt(order.deliveryFee) || 0;
+            const payerType = order.payerType || "";
+            const pType = order.paymentType || "";
+
+            if (payerType === "နောက်မှရှင်းမည်" && (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး")) {
+                return fee;
+            }
+            return 0;
         }
 
         // ဝယ်သူပေးချေမှု (Payment Method) Badge
@@ -1110,6 +1161,7 @@
                 });
             }
 
+            // Rider Summary Chart
             const summaryTbody = document.getElementById('riderSummaryChartTable');
             if (summaryTbody) {
                 summaryTbody.innerHTML = '';
@@ -1139,6 +1191,38 @@
                     `;
                     summaryTbody.appendChild(tr);
                 });
+            }
+
+            // 🏪 Shop Summary Chart (Dynamic render for each unique shop)
+            const shopSummaryTbody = document.getElementById('shopSummaryChartTable');
+            if (shopSummaryTbody) {
+                shopSummaryTbody.innerHTML = '';
+                
+                const uniqueShops = [...new Set(ordersData.map(o => o.sender))];
+                
+                if (uniqueShops.length === 0) {
+                    shopSummaryTbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">ဆိုင်များ စာရင်း မရှိသေးပါ။</td></tr>`;
+                } else {
+                    uniqueShops.forEach(sName => {
+                        const shopOrders = ordersData.filter(o => o.sender === sName && o.status !== 'အော်ဒါပယ်ဖျက်');
+                        const totalItem = shopOrders.reduce((sum, o) => sum + (parseInt(o.itemPrice) || 0), 0);
+                        const pendingPay = shopOrders.reduce((sum, o) => sum + calculatePendingShopPay(o), 0);
+                        const totalFee = shopOrders.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
+                        const pendingFee = shopOrders.reduce((sum, o) => sum + calculatePendingShopFee(o), 0);
+
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-purple-50/50";
+                        tr.innerHTML = `
+                            <td class="p-2.5 font-bold text-purple-900">${sName}</td>
+                            <td class="p-2.5 text-center"><span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-bold">${shopOrders.length} စောင်</span></td>
+                            <td class="p-2.5 text-right font-bold text-gray-700">${totalItem.toLocaleString()} MMK</td>
+                            <td class="p-2.5 text-right font-bold text-rose-800 bg-rose-50">${pendingPay.toLocaleString()} MMK</td>
+                            <td class="p-2.5 text-right font-bold text-gray-700">${totalFee.toLocaleString()} MMK</td>
+                            <td class="p-2.5 text-right font-bold text-amber-900 bg-amber-50">${pendingFee.toLocaleString()} MMK</td>
+                        `;
+                        shopSummaryTbody.appendChild(tr);
+                    });
+                }
             }
 
             renderAdminTable();
@@ -1202,6 +1286,12 @@
 
                     const totalFeeHandover = completedMyOrders.reduce((sum, o) => sum + calculateRiderFeeHandoverToOffice(o), 0);
                     document.getElementById('riderPersonalFeeHandover').innerText = `${totalFeeHandover.toLocaleString()} MMK`;
+
+                    const totalPendingShopPay = myOrders.reduce((sum, o) => sum + calculatePendingShopPay(o), 0);
+                    document.getElementById('riderPersonalPendingShopPay').innerText = `${totalPendingShopPay.toLocaleString()} MMK`;
+
+                    const totalPendingShopFee = myOrders.reduce((sum, o) => sum + calculatePendingShopFee(o), 0);
+                    document.getElementById('riderPersonalPendingShopFee').innerText = `${totalPendingShopFee.toLocaleString()} MMK`;
 
                     if (myOrders.length === 0) {
                         riderTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
