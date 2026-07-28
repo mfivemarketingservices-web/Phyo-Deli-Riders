@@ -160,7 +160,8 @@
                                 <th class="p-3.5">အော်ဒါကုတ် / ရက်စွဲ</th>
                                 <th class="p-3.5">ပေးပို့သူ / လက်ခံသူ</th>
                                 <th class="p-3.5">ပစ္စည်း / ကျသင့်ငွေ / ဆိုင်ရှင်းငွေ</th>
-                                <th class="p-3.5">ပို့ဆောင်မှု / အလေးချိန်နှင့်ခရီးဝေး</th>
+                                <th class="p-3.5">ဝယ်သူထံမှ ကောက်ခံမှု (Customer Pay)</th>
+                                <th class="p-3.5">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ် (Shop Pre-Pay)</th>
                                 <th class="p-3.5 text-center">လုပ်ငန်းစဉ် အခြေအနေ</th>
                                 <th class="p-3.5">Rider</th>
                             </tr>
@@ -331,7 +332,7 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-gray-600">Payment (ပေးချေသည့်ပုံစံ)</label>
+                        <label class="text-xs font-bold text-gray-600">Payment (ဝယ်သူပေးေချသည့်ပုံစံ)</label>
                         <select id="payment" class="w-full p-2 border rounded text-sm mt-1 font-bold">
                             <option value="ငွေသား">ငွေသား</option>
                             <option value="Kpay">Kpay</option>
@@ -340,15 +341,15 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-gray-600">Shop Pre Payer (ဆိုင်သို့ရှင်းပေးသည့်သူ)</label>
+                        <label class="text-xs font-bold text-gray-600">Shop Pre Payer (ဆိုင်သို့ရှင်းပေးသူ)</label>
                         <select id="shopPrePayer" class="w-full p-2 border rounded text-sm mt-1 font-bold">
-                            <option value="ရုံး">ရုံး</option>
                             <option value="ဝန်ထမ်း(Rider)">ဝန်ထမ်း(Rider)</option>
+                            <option value="ရုံး">ရုံး</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-gray-600">Payer Type (ဆိုင်သို့ရှင်းပေးခဲ့သည့်ပုံစံ)</label>
+                        <label class="text-xs font-bold text-gray-600">Payer Type (ဆိုင်သို့ရှင်းပေးသည့်ပုံစံ)</label>
                         <select id="payerType" class="w-full p-2 border rounded text-sm mt-1 font-bold">
                             <option value="ငွေသား">ငွေသား</option>
                             <option value="Kpay">Kpay</option>
@@ -410,7 +411,8 @@
                                 <th class="p-3">Category / Speed / အလေးချိန်နှင့်ခရီးဝေး</th>
                                 <th class="p-3">ပေးပို့သူ / လက်ခံသူ</th>
                                 <th class="p-3">ကုန်ဖိုး / ဒလီခ / Net Pay to Shop</th>
-                                <th class="p-3">ငွေချေစနစ် (Type/Payer/Payment)</th>
+                                <th class="p-3">ဝယ်သူထံမှ ကောက်ခံမှု (Customer Pay)</th>
+                                <th class="p-3">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ် (Shop Pre-Pay)</th>
                                 <th class="p-3 text-center">Status</th>
                                 <th class="p-3">Rider</th>
                                 <th class="p-3 text-center">Actions</th>
@@ -461,6 +463,8 @@
                                 <th class="p-2.5">အော်ဒါကုတ်</th>
                                 <th class="p-2.5">ပေးပို့သူ / လက်ခံသူ</th>
                                 <th class="p-2.5">ကုန်ဖိုး / ဒလီခ</th>
+                                <th class="p-2.5">ဝယ်သူပေးချေမှု</th>
+                                <th class="p-2.5">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ်</th>
                                 <th class="p-2.5 text-center">Action</th>
                             </tr>
                         </thead>
@@ -483,6 +487,8 @@
                                 <th class="p-3">အော်ဒါကုတ်</th>
                                 <th class="p-3">ပေးပို့သူ / လက်ခံသူ / ဆက်သွယ်ရန်</th>
                                 <th class="p-3">ကုန်ဖိုး / ဒလီခ / ဆိုင်ရှင်းငွေ</th>
+                                <th class="p-3">ဝယ်သူပေးချေမှု (Payment)</th>
+                                <th class="p-3">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ် (Shop Pre-Pay)</th>
                                 <th class="p-3 text-center">Status ပြောင်းရန်</th>
                             </tr>
                         </thead>
@@ -556,9 +562,9 @@
                 deliveryFee: "1500",
                 paymentType: "ကုန်ဖိုး+ဒလီခ ၂မျိုးလုံးကောက်ရမည်",
                 payer: "ကုန်ဖိုး+ဒလီခအားလက်ခံသူမှပေးချေမည်",
-                payment: "ငွေသား",
-                shopPrePayer: "ဝန်ထမ်း(Rider)",
-                payerType: "ငွေသား",
+                payment: "Kpay",
+                shopPrePayer: "ရုံး",
+                payerType: "နောက်မှရှင်းမည်",
                 status: "အပ်နှံ",
                 rider: "Unassigned",
                 pickupDateTime: "-",
@@ -587,6 +593,44 @@
                 return price;
             }
             return price;
+        }
+
+        // ဝယ်သူပေးချေမှု (Payment Method) Badge
+        function getPaymentBadge(payment) {
+            const p = payment || 'ငွေသား';
+            if (p === 'Kpay') {
+                return `<span class="bg-blue-100 text-blue-800 border border-blue-300 font-bold px-2 py-0.5 rounded text-[11px] inline-block"><i class="fa-solid fa-mobile-screen-button"></i> Kpay</span>`;
+            } else if (p === 'Wave') {
+                return `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-2 py-0.5 rounded text-[11px] inline-block"><i class="fa-solid fa-wallet"></i> Wave</span>`;
+            } else {
+                return `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-0.5 rounded text-[11px] inline-block"><i class="fa-solid fa-money-bill-wave"></i> ငွေသား</span>`;
+            }
+        }
+
+        // ဆိုင်သို့ ရှင်းပေးခဲ့သည့် စနစ် (Shop Pre-Pay Display) Badge
+        function getShopPrePayBadge(shopPrePayer, payerType) {
+            const who = shopPrePayer || 'ဝန်ထမ်း(Rider)';
+            const type = payerType || 'ငွေသား';
+
+            let whoColor = "bg-purple-100 text-purple-900 border-purple-300";
+            let whoIcon = "fa-user-gear";
+
+            if (who.includes("ရုံး")) {
+                whoColor = "bg-indigo-100 text-indigo-900 border-indigo-300";
+                whoIcon = "fa-building";
+            }
+
+            let typeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+            if (type === 'Kpay') typeColor = "bg-blue-100 text-blue-800 border-blue-300";
+            if (type === 'Wave') typeColor = "bg-amber-100 text-amber-800 border-amber-300";
+            if (type === 'နောက်မှရှင်းမည်') typeColor = "bg-rose-100 text-rose-800 border-rose-300";
+
+            return `
+                <div class="space-y-1">
+                    <div><span class="${whoColor} border font-bold px-2 py-0.5 rounded text-[10px] inline-block"><i class="fa-solid ${whoIcon}"></i> ${who}</span></div>
+                    <div><span class="${typeColor} border font-bold px-2 py-0.5 rounded text-[10px] inline-block"><i class="fa-solid fa-receipt"></i> ${type}</span></div>
+                </div>
+            `;
         }
 
         function hideAllSections() {
@@ -821,7 +865,7 @@
             document.getElementById('paymentType').value = order.paymentType || 'ကုန်ဖိုး+ဒလီခ ၂မျိုးလုံးကောက်ရမည်';
             document.getElementById('payer').value = order.payer || 'ကုန်ဖိုး+ဒလီခအားလက်ခံသူမှပေးချေမည်';
             document.getElementById('payment').value = order.payment || 'ငွေသား';
-            document.getElementById('shopPrePayer').value = order.shopPrePayer || 'ရုံး';
+            document.getElementById('shopPrePayer').value = order.shopPrePayer || 'ဝန်ထမ်း(Rider)';
             document.getElementById('payerType').value = order.payerType || 'ငွေသား';
 
             document.getElementById('assignRider').value = order.rider || 'Unassigned';
@@ -911,7 +955,7 @@
             });
 
             if (filteredOrders.length === 0) {
-                adminTbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400 italic">ရှာဖွေမှုနှင့် ကိုက်ညီသော အော်ဒါ မရှိပါ။</td></tr>`;
+                adminTbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400 italic">ရှာဖွေမှုနှင့် ကိုက်ညီသော အော်ဒါ မရှိပါ။</td></tr>`;
                 return;
             }
 
@@ -939,8 +983,10 @@
                     </td>
                     <td class="p-3 text-[11px]">
                         <p class="font-semibold text-emerald-800"><b>Collection:</b> ${o.paymentType}</p>
-                        <p class="text-gray-600"><b>Payer:</b> ${o.payer}</p>
-                        <p class="text-indigo-800"><b>Method:</b> ${o.payment}</p>
+                        <p class="text-indigo-800 mt-1"><b>Method:</b> ${getPaymentBadge(o.payment)}</p>
+                    </td>
+                    <td class="p-3">
+                        ${getShopPrePayBadge(o.shopPrePayer, o.payerType)}
                     </td>
                     <td class="p-3 text-center">${getStatusBadge(o.status)}</td>
                     <td class="p-3 font-bold ${o.rider === 'Unassigned' ? 'text-gray-400 italic' : 'text-gray-800'}">${o.rider}</td>
@@ -980,9 +1026,11 @@
                             <p class="text-amber-800 font-bold">🏠 ဆိုင်ရှင်းငွေ: ${shopPayAmount.toLocaleString()} MMK</p>
                         </td>
                         <td class="p-3.5">
-                            <span class="font-bold text-xs text-amber-700">${o.speed || 'ပုံမှန်ပို့'}</span>
-                            <p class="text-[11px] text-indigo-800 font-semibold">${o.weightAndDistance || 'ပုံမှန်'}</p>
-                            <p class="text-[10px] text-gray-500">${o.category || ''}</p>
+                            <div>${getPaymentBadge(o.payment)}</div>
+                            <div class="text-[10px] text-gray-500 mt-1">${o.paymentType}</div>
+                        </td>
+                        <td class="p-3.5">
+                            ${getShopPrePayBadge(o.shopPrePayer, o.payerType)}
                         </td>
                         <td class="p-3.5 text-center">${getStatusBadge(o.status)}</td>
                         <td class="p-3.5 font-bold ${o.rider === 'Unassigned' ? 'text-gray-400 italic' : 'text-gray-800'}">${o.rider}</td>
@@ -1022,7 +1070,7 @@
                     const availableOrders = ordersData.filter(o => o.rider === 'Unassigned' && o.status !== 'အော်ဒါပယ်ဖျက်');
                     
                     if (availableOrders.length === 0) {
-                        availTbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400 italic">လက်ရှိတွင် အပ်နှံထားသော အော်ဒါအသစ် လတ်တလော မရှိပါ။</td></tr>`;
+                        availTbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">လက်ရှိတွင် အပ်နှံထားသော အော်ဒါအသစ် လတ်တလော မရှိပါ။</td></tr>`;
                     } else {
                         availableOrders.forEach(o => {
                             const tr = document.createElement('tr');
@@ -1034,6 +1082,12 @@
                                 </td>
                                 <td class="p-2.5 font-semibold">
                                     ကုန်ဖိုး: ${parseInt(o.itemPrice).toLocaleString()} | ဒလီခ: ${parseInt(o.deliveryFee).toLocaleString()}
+                                </td>
+                                <td class="p-2.5">
+                                    ${getPaymentBadge(o.payment)}
+                                </td>
+                                <td class="p-2.5">
+                                    ${getShopPrePayBadge(o.shopPrePayer, o.payerType)}
                                 </td>
                                 <td class="p-2.5 text-center">
                                     <button onclick="acceptOrderByRider('${o.code}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow flex items-center justify-center gap-1 mx-auto">
@@ -1061,7 +1115,7 @@
                     document.getElementById('riderPersonalFees').innerText = `${totalFee.toLocaleString()} MMK`;
 
                     if (myOrders.length === 0) {
-                        riderTbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
+                        riderTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
                     } else {
                         myOrders.forEach(o => {
                             const shopPayAmount = calculateShopPay(o);
@@ -1106,6 +1160,12 @@
                                     <p>ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
                                     <p class="text-amber-800 font-bold">🏠 ဆိုင်သို့ရှင်းရန်ငွေ: ${shopPayAmount.toLocaleString()} MMK</p>
                                     <p class="text-[10px] text-indigo-900 font-semibold">💳 ${o.paymentType}</p>
+                                </td>
+                                <td class="p-3">
+                                    ${getPaymentBadge(o.payment)}
+                                </td>
+                                <td class="p-3">
+                                    ${getShopPrePayBadge(o.shopPrePayer, o.payerType)}
                                 </td>
                                 <td class="p-3 text-center">
                                     ${riderStatusSelect}
