@@ -136,6 +136,54 @@
                 <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">Live Synchronized</span>
             </div>
 
+            <!-- Rider Live Status Dashboard / Summary Cards -->
+            <div class="bg-white p-4 rounded-xl shadow border border-indigo-100 space-y-4">
+                <h3 class="font-bold text-sm text-indigo-900 flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-[#000000] fa-motorcycle text-indigo-600"></i> တနေ့တာ ရုံးတက်/ရုံးဆင်းနှင့် အော်ဒါလက်ခံနိုင်မှု အခြေအနေ (Rider Status Dashboard)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Card 1: On-Duty / Active Riders -->
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-emerald-200 pb-1.5">
+                            <span class="font-bold text-emerald-900 text-xs flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle text-emerald-500 text-[10px]"></i> 🟢 ရုံးတက်နေသူများ (On-Duty)
+                            </span>
+                            <span id="activeRidersCountBadge" class="bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full text-[11px]">0 ယောက်</span>
+                        </div>
+                        <div id="activeRidersList" class="space-y-1.5 max-h-40 overflow-y-auto text-xs">
+                            <!-- Dynamic Active Riders Render -->
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Available for Orders -->
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-sky-200 pb-1.5">
+                            <span class="font-bold text-sky-900 text-xs flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle text-sky-500 text-[10px]"></i> 🔵 ပို့ရန်အသင့်ဖြစ်နေသူများ (Available)
+                            </span>
+                            <span id="availableRidersCountBadge" class="bg-sky-200 text-sky-900 font-bold px-2 py-0.5 rounded-full text-[11px]">0 ယောက်</span>
+                        </div>
+                        <div id="availableRidersList" class="space-y-1.5 max-h-40 overflow-y-auto text-xs">
+                            <!-- Dynamic Available Riders Render -->
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Off-Duty / Shift Ended -->
+                    <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center justify-between border-b border-rose-200 pb-1.5">
+                            <span class="font-bold text-rose-900 text-xs flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle text-rose-500 text-[10px]"></i> 🔴 ရုံးဆင်း/မတက်သေးသူများ (Off-Duty)
+                            </span>
+                            <span id="offDutyRidersCountBadge" class="bg-rose-200 text-rose-900 font-bold px-2 py-0.5 rounded-full text-[11px]">0 ယောက်</span>
+                        </div>
+                        <div id="offDutyRidersList" class="space-y-1.5 max-h-40 overflow-y-auto text-xs">
+                            <!-- Dynamic Off-Duty Riders Render -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Rider Summary Table inside Chart -->
             <div class="bg-white rounded-xl shadow p-4 border border-indigo-100">
                 <h3 class="font-bold text-sm text-indigo-900 mb-3 flex items-center gap-2">
@@ -858,6 +906,103 @@
                 };
             }
             return riderShifts[riderName];
+        }
+
+        /* Dynamic Render Rider Status Dashboard inside Status Chart */
+        function renderRiderLiveStatusDashboard() {
+            const activeContainer = document.getElementById('activeRidersList');
+            const availableContainer = document.getElementById('availableRidersList');
+            const offDutyContainer = document.getElementById('offDutyRidersList');
+
+            if (!activeContainer || !availableContainer || !offDutyContainer) return;
+
+            activeContainer.innerHTML = '';
+            availableContainer.innerHTML = '';
+            offDutyContainer.innerHTML = '';
+
+            let activeCount = 0;
+            let availableCount = 0;
+            let offDutyCount = 0;
+
+            allRidersList.forEach(riderName => {
+                const shift = getRiderShift(riderName);
+
+                // Get active/ongoing orders assigned to this rider
+                const activeOrders = ordersData.filter(o => 
+                    o.rider === riderName && 
+                    o.status !== 'ပို့ဆောင်ပြီး' && 
+                    o.status !== 'အော်ဒါပယ်ဖျက်'
+                );
+                const activeOrderCount = activeOrders.length;
+
+                if (shift.isOnDuty) {
+                    activeCount++;
+                    // Render 🟢 On-Duty Card
+                    const activeEl = document.createElement('div');
+                    activeEl.className = "bg-white p-2 rounded-lg border border-emerald-200 flex justify-between items-center shadow-sm";
+                    activeEl.innerHTML = `
+                        <div>
+                            <p class="font-bold text-gray-800">${riderName}</p>
+                            <p class="text-[10px] text-emerald-700 font-semibold"><i class="fa-regular fa-clock"></i> ရုံးတက်နေသည်</p>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">
+                            ${activeOrderCount} အော်ဒါ လက်ရှိကိုင်ထား
+                        </span>
+                    `;
+                    activeContainer.appendChild(activeEl);
+
+                    // Check availability (On-duty and can take new orders)
+                    // Showing available for orders with blue badge tag
+                    availableCount++;
+                    const availableEl = document.createElement('div');
+                    availableEl.className = "bg-white p-2 rounded-lg border border-sky-200 flex justify-between items-center shadow-sm";
+                    
+                    let availBadgeHTML = '';
+                    if (activeOrderCount === 0) {
+                        availBadgeHTML = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-0.5 rounded-full text-[10px]">အော်ဒါ လွတ်နေပါသည်</span>`;
+                    } else {
+                        availBadgeHTML = `<span class="bg-sky-100 text-sky-800 border border-sky-300 font-bold px-2 py-0.5 rounded-full text-[10px]">အော်ဒါ ထပ်မံလက်ခံနိုင်</span>`;
+                    }
+
+                    availableEl.innerHTML = `
+                        <div>
+                            <p class="font-bold text-gray-800">${riderName}</p>
+                            <p class="text-[10px] text-gray-500">လက်ရှိ: ${activeOrderCount} စောင်</p>
+                        </div>
+                        <div>${availBadgeHTML}</div>
+                    `;
+                    availableContainer.appendChild(availableEl);
+
+                } else {
+                    offDutyCount++;
+                    // Render 🔴 Off-Duty Card
+                    const offDutyEl = document.createElement('div');
+                    offDutyEl.className = "bg-white p-2 rounded-lg border border-rose-200 flex justify-between items-center shadow-sm";
+                    offDutyEl.innerHTML = `
+                        <div>
+                            <p class="font-bold text-gray-700">${riderName}</p>
+                            <p class="text-[10px] text-rose-600 font-semibold"><i class="fa-solid fa-power-off"></i> ရုံးဆင်း/မတက်ရသေးပါ</p>
+                        </div>
+                        <span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full text-[10px]">Off-Duty</span>
+                    `;
+                    offDutyContainer.appendChild(offDutyEl);
+                }
+            });
+
+            // Update Badges Count
+            document.getElementById('activeRidersCountBadge').innerText = `${activeCount} ယောက်`;
+            document.getElementById('availableRidersCountBadge').innerText = `${availableCount} ယောက်`;
+            document.getElementById('offDutyRidersCountBadge').innerText = `${offDutyCount} ယောက်`;
+
+            if (activeCount === 0) {
+                activeContainer.innerHTML = `<p class="text-gray-400 italic text-center py-2">လက်ရှိ ရုံးတက်နေသူ မရှိသေးပါ</p>`;
+            }
+            if (availableCount === 0) {
+                availableContainer.innerHTML = `<p class="text-gray-400 italic text-center py-2">အော်ဒါ ပို့ဆောင်နိုင်သူ မရှိသေးပါ</p>`;
+            }
+            if (offDutyCount === 0) {
+                offDutyContainer.innerHTML = `<p class="text-gray-400 italic text-center py-2">Rider အားလုံး ရုံးတက်နေပါသည်</p>`;
+            }
         }
 
         /* ================= FEATURE 1: ALERT TIME & COLOR WARNING LOGIC ================= */
@@ -1730,6 +1875,7 @@
 
         function renderTables() {
             renderAdminApprovals();
+            renderRiderLiveStatusDashboard();
 
             const globalTbody = document.getElementById('globalOrderTableBody');
             if (globalTbody) {
@@ -1980,7 +2126,7 @@
                                     <p class="font-bold text-gray-800">ဆိုင်: ${o.sender}</p>
                                     <p class="text-amber-900 font-bold">ဝယ်သူ: ${o.receiver}</p>
                                     <p class="text-xs text-gray-500">${o.receiverAddress || 'လိပ်စာမရှိပါ'}</p>
-                                    <div class="flex items-center gap-2 mt-1.5">
+                                    <div class="flex items-center gap-1.5 mt-1.5">
                                         ${callBtn}
                                         ${mapBtn}
                                     </div>
@@ -1990,13 +2136,14 @@
                                     <p class="text-[11px]"><b>Delivery:</b> ${o.deliveryDateTime || '-'}</p>
                                     ${alertInfo.badgeHTML}
                                 </td>
-                                <td class="p-3">
-                                    <p>ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
+                                <td class="p-3 font-semibold">
+                                    <p>ကုန်ဖိုး: ${parseInt(o.itemPrice).toLocaleString()} MMK</p>
+                                    <p>ဒလီခ: ${parseInt(o.deliveryFee).toLocaleString()} MMK</p>
                                     <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
-                                    <p class="text-[10px] text-indigo-900 font-semibold">💳 ${o.paymentType}</p>
                                 </td>
                                 <td class="p-3">
                                     ${getPaymentBadge(o.payment)}
+                                    <div class="text-[10px] text-gray-500 mt-1">${o.paymentType}</div>
                                 </td>
                                 <td class="p-3">
                                     ${getShopPrePayBadge(o.shopPrePayer, o.payerType)}
@@ -2005,8 +2152,8 @@
                                     ${riderStatusSelect}
                                 </td>
                                 <td class="p-3 text-center">
-                                    <button onclick="openRiderEditModal('${o.code}')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 px-2.5 py-1.5 rounded font-bold text-xs shadow flex items-center justify-center gap-1 mx-auto">
-                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    <button onclick="openRiderEditModal('${o.code}')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold px-2 py-1 rounded text-xs shadow">
+                                        <i class="fa-solid fa-pen-to-square"></i> ပြင်မည်
                                     </button>
                                 </td>
                             `;
@@ -2015,19 +2162,12 @@
                     }
                 }
             }
-
-            if (loggedInRole === 'management') {
-                const totalOrd = ordersData.length;
-                const compOrd = ordersData.filter(o => o.status === 'ပို့ဆောင်ပြီး').length;
-                if(document.getElementById('mgmtTotalOrders')) document.getElementById('mgmtTotalOrders').innerText = totalOrd;
-                if(document.getElementById('mgmtCompletedOrders')) document.getElementById('mgmtCompletedOrders').innerText = compOrd;
-            }
         }
 
-        // Live Timer Loop for Alert Check Every Minute
-        setInterval(() => {
+        // Initialize page display on load
+        window.onload = function() {
             renderTables();
-        }, 60000);
+        };
     </script>
 </body>
 </html>
