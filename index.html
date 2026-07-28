@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
     
+    <!-- Firebase Compat SDKs (Local File ဖွင့်ရလွယ်ကူစေရန်) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
         body { font-family: 'Padauk', sans-serif; }
     </style>
@@ -84,7 +88,7 @@
             </div>
         </div>
 
-        <!-- ================= 1. LOGIN SCREEN ================= -->
+        <!-- 1. LOGIN SCREEN -->
         <section id="loginSection" class="max-w-md mx-auto my-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <h2 class="text-2xl font-bold text-center text-blue-900 mb-6">စနစ်သို့ ဝင်ရောက်ရန်</h2>
             
@@ -115,7 +119,7 @@
             </div>
         </section>
 
-        <!-- ================= 2. ORDER STATUS CHART ================= -->
+        <!-- 2. ORDER STATUS CHART -->
         <section id="chartSection" class="hidden space-y-6">
             <div class="bg-white p-5 rounded-xl shadow border border-indigo-100 flex justify-between items-center flex-wrap gap-2">
                 <div>
@@ -127,7 +131,7 @@
                 <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">Live Synchronized</span>
             </div>
 
-            <!-- Rider Summary Table inside Chart -->
+            <!-- Rider Summary Table -->
             <div class="bg-white rounded-xl shadow p-4 border border-indigo-100">
                 <h3 class="font-bold text-sm text-indigo-900 mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-users-gear text-amber-600"></i> Rider များ၏ ပို့ဆောင်ပြီး တနေ့တာ စာရင်းချုပ် Summary
@@ -146,14 +150,12 @@
                                 <th class="p-2.5 text-right bg-emerald-100 text-emerald-900">ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း</th>
                             </tr>
                         </thead>
-                        <tbody id="riderSummaryChartTable" class="divide-y font-semibold">
-                            <!-- Dynamic Summary Render -->
-                        </tbody>
+                        <tbody id="riderSummaryChartTable" class="divide-y font-semibold"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary -->
+            <!-- Shop Summary Table -->
             <div class="bg-white rounded-xl shadow p-4 border border-purple-100">
                 <h3 class="font-bold text-sm text-purple-900 mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-store text-purple-600"></i> 🏪 ဆိုင်များနှင့် ရှင်းလင်းရန် တနေ့တာ စာရင်းချုပ် Summary
@@ -169,9 +171,7 @@
                                 <th class="p-2.5 text-right">ဒလီခ စုစုပေါင်း</th>
                             </tr>
                         </thead>
-                        <tbody id="shopSummaryChartTable" class="divide-y font-semibold">
-                            <!-- Dynamic Shop Summary Render -->
-                        </tbody>
+                        <tbody id="shopSummaryChartTable" class="divide-y font-semibold"></tbody>
                     </table>
                 </div>
             </div>
@@ -193,15 +193,13 @@
                                 <th class="p-3.5">Rider</th>
                             </tr>
                         </thead>
-                        <tbody id="globalOrderTableBody" class="divide-y text-xs">
-                            <!-- Dynamic Orders Render -->
-                        </tbody>
+                        <tbody id="globalOrderTableBody" class="divide-y text-xs"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- ================= 3. MANAGEMENT ================= -->
+        <!-- 3. MANAGEMENT -->
         <section id="managementSection" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
                 <h2 class="text-xl font-bold text-blue-900">🏛️ Management (အောင်နိုင်ဖြိုး)</h2>
@@ -219,7 +217,7 @@
             </div>
         </section>
 
-        <!-- ================= 4. ADMIN ================= -->
+        <!-- 4. ADMIN -->
         <section id="adminSection" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
                 <h2 class="text-xl font-bold text-indigo-900">🖥️ Admin Dispatcher (မေချစ်ပို)</h2>
@@ -419,7 +417,7 @@
                 </button>
             </div>
 
-            <!-- Admin Table Controls & Search Box -->
+            <!-- Admin Table Controls -->
             <div class="bg-white p-4 rounded-lg shadow space-y-3 border">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <h3 class="font-bold text-gray-800 text-md"><i class="fa-solid fa-list-check"></i> အော်ဒါများ စီမံခန့်ခွဲခြင်း (Admin Table)</h3>
@@ -444,15 +442,13 @@
                                 <th class="p-3 text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="adminOrderTableBody" class="divide-y text-xs">
-                            <!-- Dynamic Admin Orders -->
-                        </tbody>
+                        <tbody id="adminOrderTableBody" class="divide-y text-xs"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- ================= 5. RIDER DASHBOARD ================= -->
+        <!-- 5. RIDER DASHBOARD -->
         <section id="riderSection" class="hidden space-y-6">
             <div class="bg-blue-900 text-white p-4 rounded-lg flex justify-between items-center shadow">
                 <div>
@@ -461,7 +457,7 @@
                 </div>
             </div>
 
-            <!-- Rider Personal Summary Cards -->
+            <!-- Rider Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl text-emerald-900 shadow-sm">
                     <p class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-circle-check"></i> ပို့ဆောင်ပြီး အော်ဒါ</p>
@@ -487,14 +483,13 @@
                     <p class="text-xs font-bold text-emerald-800"><i class="fa-solid fa-sack-dollar"></i> ရုံးအပ်ရန် ဒလီခ</p>
                     <p id="riderPersonalFeeHandover" class="text-xl font-bold mt-1 text-emerald-900">0 MMK</p>
                 </div>
-                <!-- Shop Specific Cards -->
                 <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-rose-900 shadow-sm">
                     <p class="text-xs font-bold text-rose-700"><i class="fa-solid fa-store"></i> ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ဒလီခနှုတ်ပြီး)</p>
                     <p id="riderPersonalPendingShopPay" class="text-xl font-bold mt-1 text-rose-900">0 MMK</p>
                 </div>
             </div>
 
-            <!-- SECTION A: Available Unassigned Orders for Self Pick -->
+            <!-- Available Unassigned Orders -->
             <div class="bg-amber-50 border border-amber-300 p-4 rounded-xl shadow-sm space-y-3">
                 <h3 class="font-bold text-amber-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-bell text-amber-600 animate-bounce"></i> အပ်နှံထားပြီး Rider မအပ်ရသေးသော အော်ဒါများ (Available Orders)
@@ -511,14 +506,12 @@
                                 <th class="p-2.5 text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="availableOrdersTableBody" class="divide-y">
-                            <!-- Dynamic Available Orders -->
-                        </tbody>
+                        <tbody id="availableOrdersTableBody" class="divide-y"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- SECTION B: My Accepted Orders -->
+            <!-- My Accepted Orders -->
             <div class="bg-white p-5 rounded-xl shadow border space-y-4">
                 <h3 class="font-bold text-md text-gray-800 border-b pb-2 flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-motorcycle text-indigo-600"></i> မိမိလက်ခံ/အပ်နှံထားသော အော်ဒါများ</span>
@@ -535,9 +528,7 @@
                                 <th class="p-3 text-center">Status ပြောင်းရန်</th>
                             </tr>
                         </thead>
-                        <tbody id="riderPersonalTableBody" class="divide-y text-xs">
-                            <!-- Dynamic Rider Table -->
-                        </tbody>
+                        <tbody id="riderPersonalTableBody" class="divide-y text-xs"></tbody>
                     </table>
                 </div>
             </div>
@@ -545,8 +536,24 @@
 
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- Firebase Script (Compat Version) -->
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBithfWY9Kz5HsKiELy1r1OiRpLLe_ItI4",
+            authDomain: "phyo-delivery-services.firebaseapp.com",
+            databaseURL: "https://phyo-delivery-services-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "phyo-delivery-services",
+            storageBucket: "phyo-delivery-services.firebasestorage.app",
+            messagingSenderId: "688762846818",
+            appId: "1:688762846818:web:759adb64f7e97ade5a1b3b",
+            measurementId: "G-CC1PGRQH7E"
+        };
+
+        // Firebase Initialize
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const ordersRef = db.ref('orders');
+
         const allRidersList = [
             "သန့်စင် (အချိန်ပိုင်း)",
             "အောင်သူရလှိုင် (အချိန်ပိုင်း)",
@@ -556,85 +563,33 @@
             "ကိုကျော် (ကော်မရှင်)"
         ];
 
-        let ordersData = [
-            {
-                code: "ORD-1008",
-                createdDate: "2026-07-28",
-                type: "partner",
-                category: "OS မုန့်နှင့်ပစ္စည်းများပေးပို့ခြင်း",
-                speed: "အမြန်ပို့",
-                weightAndDistance: "ပုံမှန်",
-                sender: "မော်လမြိုင် ရွှေကိတ်မုန့်",
-                senderPhone: "-",
-                senderAddress: "မြိုင်သာယာ",
-                senderGps: "",
-                receiver: "ဦးမောင်",
-                receiverPhone: "09978730790",
-                receiverAddress: "ဈေးကြို",
-                receiverGps: "https://maps.google.com/?q=16.48,97.62",
-                item: "မွေးနေ့ကိတ် (1 ခု)",
-                itemPrice: "15000",
-                deliveryFee: "1500",
-                paymentType: "ကုန်ဖိုးသာကောက်ရမည်",
-                payer: "ကုန်ဖိုး+ဒလီခအားပေးပို့သူမှပေးချေမည်",
-                payment: "ငွေသား",
-                shopPrePayer: "ဝန်ထမ်း(Rider)",
-                payerType: "ငွေသား",
-                status: "ပို့ဆောင်ပြီး",
-                rider: "သန့်စင် (အချိန်ပိုင်း)",
-                pickupDateTime: "2026-07-28 / 10:00",
-                deliveryDateTime: "2026-07-28 / 11:30"
-            },
-            {
-                code: "ORD-1009",
-                createdDate: "2026-07-28",
-                type: "other",
-                category: "အစားအသောက်ပို့ဆောင်ခြင်း",
-                speed: "ပုံမှန်ပို့",
-                weightAndDistance: "အဝေးဇုန်(E/F/G)ပို့",
-                sender: "ဒေါ်လှ (ထမင်းဆိုင်)",
-                senderPhone: "0912345678",
-                senderAddress: "ဈေးကြို",
-                senderGps: "",
-                receiver: "မသန်းသန်း",
-                receiverPhone: "09987654321",
-                receiverAddress: "ဖောင်စိန်လမ်း",
-                receiverGps: "",
-                item: "ကြက်သားဆီပြန် (၂ ပွဲ)",
-                itemPrice: "8000",
-                deliveryFee: "1500",
-                paymentType: "ကုန်ဖိုး+ဒလီခ ၂မျိုးလုံးကောက်ရမည်",
-                payer: "ကုန်ဖိုး+ဒလီခအားလက်ခံသူမှပေးချေမည်",
-                payment: "Kpay",
-                shopPrePayer: "ရုံး",
-                payerType: "နောက်မှရှင်းမည်",
-                status: "အပ်နှံ",
-                rider: "Unassigned",
-                pickupDateTime: "-",
-                deliveryDateTime: "-"
-            }
-        ];
-
+        let ordersData = [];
         let loggedInRole = null; 
         let currentRiderName = '';
 
-        // ကောက်ခံရရှိသည့် ကုန်ဖိုး ( status က 'ပို့ဆောင်ပြီး' ဖြစ်မှ ပေါင်းမည်)
+        // Live Synchronized Listener
+        ordersRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                ordersData = Object.keys(data).map(key => data[key]);
+            } else {
+                ordersData = [];
+            }
+            renderTables();
+        });
+
         function calculateCollectedItemPrice(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
-
             const price = parseInt(order.itemPrice) || 0;
             const pType = order.paymentType || "";
-
             if (pType === "ဒလီခသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
             }
             return price;
         }
 
-        // ဝန်ထမ်းရှင်း ကုန်ဖိုး (ဒလီခ နှုတ်ရန်လိုပါက နှုတ်ပြီး ရှင်းပေးသည့်ပမာဏ)
         function calculateStaffPrePayItem(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
-
             const price = parseInt(order.itemPrice) || 0;
             const fee = parseInt(order.deliveryFee) || 0;
             const who = order.shopPrePayer || "";
@@ -649,10 +604,8 @@
             return 0;
         }
 
-        // ရုံးရှင်း ကုန်ဖိုး
         function calculateOfficePrePayItem(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
-
             const price = parseInt(order.itemPrice) || 0;
             const fee = parseInt(order.deliveryFee) || 0;
             const who = order.shopPrePayer || "";
@@ -667,36 +620,27 @@
             return 0;
         }
 
-        // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး = ဝယ်သူထံမှ ကောက်ခံရရှိ ကုန်ဖိုး - ဝန်ထမ်းဆိုင်သို့ ကြိုရှင်းပေးခဲ့သည့် ကုန်ဖိုး
         function calculateRiderHandoverToOffice(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
-
-            if (order.payment === "Kpay" || order.payment === "Wave") {
-                return 0;
-            }
+            if (order.payment === "Kpay" || order.payment === "Wave") return 0;
 
             const collected = calculateCollectedItemPrice(order);
             const staffPrePay = calculateStaffPrePayItem(order);
             return Math.max(0, collected - staffPrePay);
         }
 
-        // ဝယ်ယူသူထံမှ ကောက်ခံရရှိသည့် ဒလီခ စုစုပေါင်း
         function calculateCollectedDeliveryFee(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
-
             const fee = parseInt(order.deliveryFee) || 0;
             const pType = order.paymentType || "";
-            
             if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
             }
             return fee;
         }
 
-        // ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း
         function calculateRiderFeeHandoverToOffice(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
-
             const fee = parseInt(order.deliveryFee) || 0;
             const pType = order.paymentType || "";
             const payMethod = order.payment || "";
@@ -704,15 +648,11 @@
             if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
             }
-
-            if (payMethod === "Kpay" || payMethod === "Wave") {
-                return 0;
-            }
+            if (payMethod === "Kpay" || payMethod === "Wave") return 0;
 
             return fee;
         }
 
-        // 🏪 ဆိုင်သို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ကုန်ဖိုးသာကောက်ရမည်ဖြစ်ပါက ဒလီခ နှုတ်ပေးမည်)
         function calculatePendingShopPay(order) {
             const price = parseInt(order.itemPrice) || 0;
             const fee = parseInt(order.deliveryFee) || 0;
@@ -729,7 +669,6 @@
             return 0;
         }
 
-        // ဝယ်သူပေးချေမှု (Payment Method) Badge
         function getPaymentBadge(payment) {
             const p = payment || 'ငွေသား';
             if (p === 'Kpay') {
@@ -741,7 +680,6 @@
             }
         }
 
-        // ဆိုင်သို့ ရှင်းပေးခဲ့သည့် စနစ် Badge
         function getShopPrePayBadge(shopPrePayer, payerType) {
             const who = shopPrePayer || 'ဝန်ထမ်း(Rider)';
             const type = payerType || 'ငွေသား';
@@ -870,7 +808,6 @@
         }
 
         function saveAdminOrder() {
-            const editingCode = document.getElementById('editingOrderCode').value;
             const codeInput = document.getElementById('orderCode').value.trim();
             const code = codeInput !== "" ? codeInput : "ORD-" + Math.floor(1000 + Math.random() * 9000);
             
@@ -948,19 +885,15 @@
                 rider: rider
             };
 
-            if (editingCode) {
-                const idx = ordersData.findIndex(o => o.code === editingCode);
-                if (idx !== -1) {
-                    ordersData[idx] = orderObject;
-                    alert(`အော်ဒါ [${code}] အား အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။`);
-                }
-            } else {
-                ordersData.unshift(orderObject);
-                alert(`အော်ဒါ [${code}] အသစ် အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။`);
-            }
-
-            resetAdminForm();
-            renderTables();
+            // Database သို့ သိမ်းဆည်းခြင်း
+            db.ref('orders/' + code).set(orderObject)
+                .then(() => {
+                    alert(`အော်ဒါ [${code}] အား မူလအခြေအနေအတိုင်း စနစ်သို့ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။`);
+                    resetAdminForm();
+                })
+                .catch((error) => {
+                    alert("Firebase သို့ သိမ်းဆည်းမှု မအောင်မြင်ပါ: " + error.message);
+                });
         }
 
         function editOrderAdmin(code) {
@@ -1013,9 +946,13 @@
 
         function deleteOrderAdmin(code) {
             if (confirm(`အော်ဒါ [${code}] အား စနစ်အတွင်းမှ ဖျက်ရန် သေချာပါသလား?`)) {
-                ordersData = ordersData.filter(o => o.code !== code);
-                alert(`အော်ဒါ [${code}] အား ဖျက်ပြီးပါပြီ။`);
-                renderTables();
+                db.ref('orders/' + code).remove()
+                    .then(() => {
+                        alert(`အော်ဒါ [${code}] အား ဖျက်ပြီးပါပြီ။`);
+                    })
+                    .catch((err) => {
+                        alert("ဖျက်ဆီးမှု မအောင်မြင်ပါ: " + err.message);
+                    });
             }
         }
 
@@ -1041,24 +978,22 @@
         }
 
         function acceptOrderByRider(code) {
-            const order = ordersData.find(o => o.code === code);
-            if (!order) return;
-
             if (confirm(`အော်ဒါ [${code}] အား သင်လက်ခံဆွဲဆောင် ပို့ဆောင်မည်မှာ သေချာပါသလား?`)) {
-                order.rider = currentRiderName;
-                order.status = "လက်ခံ";
-                alert(`အော်ဒါ [${code}] အား ${currentRiderName} မှ အောင်မြင်စွာ လက်ခံလိုက်ပါပြီ။`);
-                renderTables();
+                db.ref('orders/' + code).update({
+                    rider: currentRiderName,
+                    status: "လက်ခံ"
+                }).then(() => {
+                    alert(`အော်ဒါ [${code}] အား ${currentRiderName} မှ အောင်မြင်စွာ လက်ခံလိုက်ပါပြီ။`);
+                });
             }
         }
 
         function updateRiderStatus(code, newStatus) {
-            const order = ordersData.find(o => o.code === code);
-            if (!order) return;
-
-            order.status = newStatus;
-            alert(`အော်ဒါ [${code}] ၏ Status အား [${newStatus}] သို့ ပြောင်းလဲလိုက်ပါပြီ။`);
-            renderTables();
+            db.ref('orders/' + code).update({
+                status: newStatus
+            }).then(() => {
+                alert(`အော်ဒါ [${code}] ၏ Status အား [${newStatus}] သို့ ပြောင်းလဲလိုက်ပါပြီ။`);
+            });
         }
 
         function getStatusBadge(status) {
@@ -1082,7 +1017,7 @@
             adminTbody.innerHTML = '';
 
             const filteredOrders = ordersData.filter(o => {
-                const codeMatch = o.code.toLowerCase().includes(searchVal);
+                const codeMatch = (o.code || '').toLowerCase().includes(searchVal);
                 const dateMatch = (o.createdDate || '').toLowerCase().includes(searchVal);
                 const riderMatch = (o.rider || '').toLowerCase().includes(searchVal);
                 return codeMatch || dateMatch || riderMatch;
@@ -1205,7 +1140,7 @@
                 });
             }
 
-            // 🏪 Shop Summary Chart
+            // Shop Summary Chart
             const shopSummaryTbody = document.getElementById('shopSummaryChartTable');
             if (shopSummaryTbody) {
                 shopSummaryTbody.innerHTML = '';
