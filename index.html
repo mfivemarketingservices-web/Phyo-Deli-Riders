@@ -143,6 +143,7 @@
                                 <th class="p-2.5 text-right">ရုံးရှင်း ကုန်ဖိုး</th>
                                 <th class="p-2.5 text-right bg-amber-100 text-amber-900">ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုးစုစုပေါင်း</th>
                                 <th class="p-2.5 text-right">ကောက်ခံရရှိ ဒလီခ စုစုပေါင်း</th>
+                                <th class="p-2.5 text-right bg-emerald-100 text-emerald-900">ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း</th>
                             </tr>
                         </thead>
                         <tbody id="riderSummaryChartTable" class="divide-y font-semibold">
@@ -439,13 +440,13 @@
             </div>
 
             <!-- Rider Personal Summary Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3">
                 <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl text-emerald-900 shadow-sm">
-                    <p class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-circle-check"></i> ပို့ဆောင်ပြီး အော်ဒါ စုစုပေါင်း</p>
+                    <p class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-circle-check"></i> ပို့ဆောင်ပြီး အော်ဒါ</p>
                     <p id="riderPersonalCount" class="text-xl font-bold mt-1">0 စောင်</p>
                 </div>
                 <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-amber-900 shadow-sm">
-                    <p class="text-xs font-bold text-amber-700"><i class="fa-solid fa-store"></i> ကောက်ခံရရှိသည့် ကုန်ဖိုးစုစုပေါင်း</p>
+                    <p class="text-xs font-bold text-amber-700"><i class="fa-solid fa-store"></i> ကောက်ခံရရှိ ကုန်ဖိုး</p>
                     <p id="riderPersonalCollectedItem" class="text-xl font-bold mt-1">0 MMK</p>
                 </div>
                 <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-xl text-purple-900 shadow-sm">
@@ -457,8 +458,12 @@
                     <p id="riderPersonalOfficePrePay" class="text-xl font-bold mt-1">0 MMK</p>
                 </div>
                 <div class="bg-amber-100 border border-amber-300 p-3.5 rounded-xl text-amber-950 shadow-sm">
-                    <p class="text-xs font-bold text-amber-800"><i class="fa-solid fa-hand-holding-dollar"></i> ရုံးသို့ အပ်နှံရန် ကုန်ဖိုးစုစုပေါင်း</p>
+                    <p class="text-xs font-bold text-amber-800"><i class="fa-solid fa-hand-holding-dollar"></i> ရုံးအပ်ရန် ကုန်ဖိုး</p>
                     <p id="riderPersonalHandover" class="text-xl font-bold mt-1 text-amber-900">0 MMK</p>
+                </div>
+                <div class="bg-emerald-100 border border-emerald-300 p-3.5 rounded-xl text-emerald-950 shadow-sm">
+                    <p class="text-xs font-bold text-emerald-800"><i class="fa-solid fa-sack-dollar"></i> ရုံးအပ်ရန် ဒလီခ</p>
+                    <p id="riderPersonalFeeHandover" class="text-xl font-bold mt-1 text-emerald-900">0 MMK</p>
                 </div>
             </div>
 
@@ -622,6 +627,43 @@
             const collected = calculateCollectedItemPrice(order);
             const staffPrePay = calculateStaffPrePayItem(order);
             return Math.max(0, collected - staffPrePay);
+        }
+
+        // ဝယ်ယူသူထံမှ ကောက်ခံရရှိသည့် ဒလီခ စုစုပေါင်း
+        function calculateCollectedDeliveryFee(order) {
+            const fee = parseInt(order.deliveryFee) || 0;
+            const pType = order.paymentType || "";
+            
+            if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
+                return 0;
+            }
+            return fee;
+        }
+
+        // ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း
+        // (ကောက်ခံရရှိ ဒလီခ - ရုံးသို့ Kpay/Wave ဖြင့် တိုက်ရိုက်ဝင်ငွေများ - ဆိုင်မှ နောက်မှ ပြန်တောင်းရမည့် ဒလီခများ ကို နှုတ်ပါမည်)
+        function calculateRiderFeeHandoverToOffice(order) {
+            const fee = parseInt(order.deliveryFee) || 0;
+            const pType = order.paymentType || "";
+            const payMethod = order.payment || "";
+            const payerType = order.payerType || "";
+
+            // 1. ဝယ်ယူသူထံမှ ဒလီခ မကောက်ရသော အော်ဒါ သို့မဟုတ် ရုံးသို့ ဒလီခတိုက်ရိုက်ရှင်းပြီးဖြစ်သော အော်ဒါများ
+            if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
+                return 0;
+            }
+
+            // 2. ရုံးသို့ Kpay / Wave ဖြင့် တိုက်ရိုက်ဝင်သော ဒလီခများ (Rider ထံ လက်ငင်းမရှိပါ)
+            if (payMethod === "Kpay" || payMethod === "Wave") {
+                return 0;
+            }
+
+            // 3. ဆိုင်တွင် နောက်မှပြန်တောင်းရမည့် ဒလီခ (ဆိုင်သို့ နောက်မှရှင်းမည် စနစ်)
+            if (payerType === "နောက်မှရှင်းမည်") {
+                return 0;
+            }
+
+            return fee;
         }
 
         // ဝယ်သူပေးချေမှု (Payment Method) Badge
@@ -1079,7 +1121,9 @@
                     const staffPrePayTotal = completed.reduce((sum, o) => sum + calculateStaffPrePayItem(o), 0);
                     const officePrePayTotal = completed.reduce((sum, o) => sum + calculateOfficePrePayItem(o), 0);
                     const handoverTotal = completed.reduce((sum, o) => sum + calculateRiderHandoverToOffice(o), 0);
-                    const feePay = completed.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
+                    
+                    const collectedFeeTotal = completed.reduce((sum, o) => sum + calculateCollectedDeliveryFee(o), 0);
+                    const feeHandoverTotal = completed.reduce((sum, o) => sum + calculateRiderFeeHandoverToOffice(o), 0);
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-indigo-50/50";
@@ -1090,7 +1134,8 @@
                         <td class="p-2.5 text-right font-bold text-purple-700">${staffPrePayTotal.toLocaleString()} MMK</td>
                         <td class="p-2.5 text-right font-bold text-sky-700">${officePrePayTotal.toLocaleString()} MMK</td>
                         <td class="p-2.5 text-right font-bold text-amber-900 bg-amber-50">${handoverTotal.toLocaleString()} MMK</td>
-                        <td class="p-2.5 text-right font-bold text-emerald-700">${feePay.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-indigo-700">${collectedFeeTotal.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-emerald-900 bg-emerald-50">${feeHandoverTotal.toLocaleString()} MMK</td>
                     `;
                     summaryTbody.appendChild(tr);
                 });
@@ -1154,6 +1199,9 @@
 
                     const totalHandover = completedMyOrders.reduce((sum, o) => sum + calculateRiderHandoverToOffice(o), 0);
                     document.getElementById('riderPersonalHandover').innerText = `${totalHandover.toLocaleString()} MMK`;
+
+                    const totalFeeHandover = completedMyOrders.reduce((sum, o) => sum + calculateRiderFeeHandoverToOffice(o), 0);
+                    document.getElementById('riderPersonalFeeHandover').innerText = `${totalFeeHandover.toLocaleString()} MMK`;
 
                     if (myOrders.length === 0) {
                         riderTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
