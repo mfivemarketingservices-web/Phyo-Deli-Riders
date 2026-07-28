@@ -160,7 +160,7 @@
                                 <th class="p-3.5">အော်ဒါကုတ် / ရက်စွဲ</th>
                                 <th class="p-3.5">ပေးပို့သူ / လက်ခံသူ</th>
                                 <th class="p-3.5">ပစ္စည်း / ကျသင့်ငွေ / ဆိုင်ရှင်းငွေ</th>
-                                <th class="p-3.5">ပို့ဆောင်မှု / Speed</th>
+                                <th class="p-3.5">ပို့ဆောင်မှု / အလေးချိန်နှင့်ခရီးဝေး</th>
                                 <th class="p-3.5 text-center">လုပ်ငန်းစဉ် အခြေအနေ</th>
                                 <th class="p-3.5">Rider</th>
                             </tr>
@@ -249,6 +249,20 @@
                         </select>
                     </div>
 
+                    <!-- အလေးချိန်ပိုနှင့် ခရီးဝေးပို့ Dropdown -->
+                    <div>
+                        <label class="text-xs font-bold text-gray-600">အလေးချိန်ပိုနှင့် ခရီးဝေးပို့</label>
+                        <select id="weightAndDistance" class="w-full p-2 border rounded text-sm mt-1 font-bold text-amber-900 bg-amber-50">
+                            <option value="ပုံမှန်">ပုံမှန်</option>
+                            <option value="အလေးချိန်ပို">အလေးချိန်ပို</option>
+                            <option value="အဝေးဇုန်(E/F/G)ပို့">အဝေးဇုန်(E/F/G)ပို့</option>
+                            <option value="အလေးချိန်ပို/ဇုန်(E/F/G)ပို့">အလေးချိန်ပို/ဇုန်(E/F/G)ပို့</option>
+                            <option value="ကိတ်နှင့်ပျက်စီးလွယ်သောပစ္စည်းများပို့">ကိတ်နှင့်ပျက်စီးလွယ်သောပစ္စည်းများပို့</option>
+                            <option value="အဝေးဇုန်ကိတ်နှင့်ပျက်စီးလွယ်သောပစ္စည်းများပို့">အဝေးဇုန်ကိတ်နှင့်ပျက်စီးလွယ်သောပစ္စည်းများပို့</option>
+                            <option value="အဝေးဇုန်သို့အလေးချိန်ပိုကိတ်နှင့်ပျက်စီးလွယ်သောပစ္စည်းများပို့">အဝေးဇုန်သို့အလေးချိန်ပိုကိတ်နှင့်ပျက်စီးလွယ်သောပစ္စည်းများပို့</option>
+                        </select>
+                    </div>
+
                     <div>
                         <label class="text-xs font-bold text-gray-600">Status</label>
                         <select id="orderStatus" class="w-full p-2 border rounded text-sm mt-1 font-bold">
@@ -304,7 +318,6 @@
                             <option value="ကုန်ဖိုးသာကောက်ရမည်">ကုန်ဖိုးသာကောက်ရမည်</option>
                             <option value="ဒလီခသာကောက်ရမည်">ဒလီခသာကောက်ရမည်</option>
                             <option value="ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး">ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး</option>
-
                             <option value="ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး">ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး</option>
                         </select>
                     </div>
@@ -394,7 +407,7 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-100 border-b">
                             <tr>
                                 <th class="p-3">Order Code / Date</th>
-                                <th class="p-3">Category / Speed</th>
+                                <th class="p-3">Category / Speed / အလေးချိန်နှင့်ခရီးဝေး</th>
                                 <th class="p-3">ပေးပို့သူ / လက်ခံသူ</th>
                                 <th class="p-3">ကုန်ဖိုး / ဒလီခ / Net Pay to Shop</th>
                                 <th class="p-3">ငွေချေစနစ် (Type/Payer/Payment)</th>
@@ -501,6 +514,7 @@
                 type: "partner",
                 category: "OS မုန့်နှင့်ပစ္စည်းများပေးပို့ခြင်း",
                 speed: "အမြန်ပို့",
+                weightAndDistance: "ပုံမှန်",
                 sender: "မော်လမြိုင် ရွှေကိတ်မုန့်",
                 senderPhone: "-",
                 senderAddress: "မြိုင်သာယာ",
@@ -528,6 +542,7 @@
                 type: "other",
                 category: "အစားအသောက်ပို့ဆောင်ခြင်း",
                 speed: "ပုံမှန်ပို့",
+                weightAndDistance: "အဝေးဇုန်(E/F/G)ပို့",
                 sender: "ဒေါ်လှ (ထမင်းဆိုင်)",
                 senderPhone: "0912345678",
                 senderAddress: "ဈေးကြို",
@@ -581,7 +596,6 @@
                 if(el) el.classList.add('hidden');
             });
 
-            // Login ဝင်သွားချိန်တွင် Marquee နှင့် Contact Card တို့ ပုန်းပါမည်
             const marquee = document.getElementById('marqueeContainer');
             const contactCard = document.getElementById('contactCardContainer');
             if (marquee) marquee.classList.add('hidden');
@@ -670,7 +684,6 @@
             
             hideAllSections();
             
-            // Login Screen သို့ ပြန်ရောက်ချိန်တွင် Login Box, Marquee, Contact Card များကို ပြန်ပြမည်
             document.getElementById('loginSection').classList.remove('hidden');
             const marquee = document.getElementById('marqueeContainer');
             const contactCard = document.getElementById('contactCardContainer');
@@ -710,6 +723,7 @@
 
             const orderCategory = document.getElementById('orderCategory').value;
             const deliverySpeed = document.getElementById('deliverySpeed').value;
+            const weightAndDistance = document.getElementById('weightAndDistance').value;
             const orderStatus = document.getElementById('orderStatus').value;
 
             const paymentType = document.getElementById('paymentType').value;
@@ -733,6 +747,7 @@
                 type: orderType,
                 category: orderCategory,
                 speed: deliverySpeed,
+                weightAndDistance: weightAndDistance,
                 sender: senderName,
                 senderPhone: senderPhone,
                 senderAddress: senderAddress,
@@ -800,6 +815,7 @@
 
             document.getElementById('orderCategory').value = order.category || 'အစားအသောက်ပို့ဆောင်ခြင်း';
             document.getElementById('deliverySpeed').value = order.speed || 'ပုံမှန်ပို့';
+            document.getElementById('weightAndDistance').value = order.weightAndDistance || 'ပုံမှန်';
             document.getElementById('orderStatus').value = order.status || 'အပ်နှံ';
 
             document.getElementById('paymentType').value = order.paymentType || 'ကုန်ဖိုး+ဒလီခ ၂မျိုးလုံးကောက်ရမည်';
@@ -839,6 +855,7 @@
             document.getElementById('senderPhone').value = '';
             document.getElementById('senderAddress').value = '';
             document.getElementById('senderGps').value = '';
+            document.getElementById('weightAndDistance').value = 'ပုံမှန်';
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-cart-plus"></i> အော်ဒါ အသစ်ဖန်တီး အပ်နှံရန်`;
             document.getElementById('saveOrderBtn').innerHTML = `<i class="fa-solid fa-plus-circle"></i> Create Order & Sync`;
@@ -910,6 +927,7 @@
                     <td class="p-3">
                         <p class="font-bold text-gray-800 text-[11px]">${o.category || '-'}</p>
                         <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">${o.speed || '-'}</span>
+                        <div class="text-[10px] font-bold text-indigo-700 mt-0.5">📦 ${o.weightAndDistance || 'ပုံမှန်'}</div>
                     </td>
                     <td class="p-3">
                         <p class="font-bold text-amber-900">${o.sender}</p>
@@ -963,7 +981,8 @@
                         </td>
                         <td class="p-3.5">
                             <span class="font-bold text-xs text-amber-700">${o.speed || 'ပုံမှန်ပို့'}</span>
-                            <p class="text-[11px] text-gray-500">${o.category || ''}</p>
+                            <p class="text-[11px] text-indigo-800 font-semibold">${o.weightAndDistance || 'ပုံမှန်'}</p>
+                            <p class="text-[10px] text-gray-500">${o.category || ''}</p>
                         </td>
                         <td class="p-3.5 text-center">${getStatusBadge(o.status)}</td>
                         <td class="p-3.5 font-bold ${o.rider === 'Unassigned' ? 'text-gray-400 italic' : 'text-gray-800'}">${o.rider}</td>
