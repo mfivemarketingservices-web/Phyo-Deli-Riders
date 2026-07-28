@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase Compat SDKs (Local File ဖွင့်ရလွယ်ကူစေရန်) -->
+    <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -778,10 +778,19 @@
             }
         }
 
+        // Fix #1: Correct section switching logic
         function goToMyDashboard() {
             if (!loggedInRole) return;
             hideAllSections();
-            document.getElementById(`${loggedInRole}Section`).classList.remove('hidden');
+
+            let targetSectionId = '';
+            if (loggedInRole === 'management') targetSectionId = 'managementSection';
+            else if (loggedInRole === 'admin') targetSectionId = 'adminSection';
+            else if (loggedInRole === 'rider') targetSectionId = 'riderSection';
+
+            if (targetSectionId && document.getElementById(targetSectionId)) {
+                document.getElementById(targetSectionId).classList.remove('hidden');
+            }
             renderTables();
         }
 
@@ -833,8 +842,8 @@
             const receiverGps = document.getElementById('receiverGps').value;
 
             const item = document.getElementById('itemTitle').value || "ကုန်ပစ္စည်း";
-            const itemPrice = document.getElementById('itemPrice').value || "0";
-            const deliveryFee = document.getElementById('deliveryFee').value || "0";
+            const itemPrice = parseInt(document.getElementById('itemPrice').value) || 0;
+            const deliveryFee = parseInt(document.getElementById('deliveryFee').value) || 0;
 
             const orderCategory = document.getElementById('orderCategory').value;
             const deliverySpeed = document.getElementById('deliverySpeed').value;
@@ -897,7 +906,7 @@
         }
 
         function editOrderAdmin(code) {
-            const order = ordersData.find(o => o.code === code);
+            const order = ordersData.find(o => String(o.code) === String(code));
             if (!order) return;
 
             document.getElementById('editingOrderCode').value = order.code;
@@ -1009,6 +1018,7 @@
             }
         }
 
+        // Fix #2: Prevent string type error during search
         function renderAdminTable() {
             const adminTbody = document.getElementById('adminOrderTableBody');
             if (!adminTbody) return;
@@ -1017,9 +1027,9 @@
             adminTbody.innerHTML = '';
 
             const filteredOrders = ordersData.filter(o => {
-                const codeMatch = (o.code || '').toLowerCase().includes(searchVal);
-                const dateMatch = (o.createdDate || '').toLowerCase().includes(searchVal);
-                const riderMatch = (o.rider || '').toLowerCase().includes(searchVal);
+                const codeMatch = String(o.code || '').toLowerCase().includes(searchVal);
+                const dateMatch = String(o.createdDate || '').toLowerCase().includes(searchVal);
+                const riderMatch = String(o.rider || '').toLowerCase().includes(searchVal);
                 return codeMatch || dateMatch || riderMatch;
             });
 
@@ -1030,6 +1040,9 @@
 
             filteredOrders.forEach(o => {
                 const collectedItem = calculateCollectedItemPrice(o);
+                const itemP = parseInt(o.itemPrice) || 0;
+                const feeP = parseInt(o.deliveryFee) || 0;
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-indigo-50/50 transition";
                 tr.innerHTML = `
@@ -1047,7 +1060,7 @@
                         <p class="text-gray-700">➡️ ${o.receiver} (${o.receiverPhone || '-'})</p>
                     </td>
                     <td class="p-3">
-                        <p>ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
+                        <p>ကုန်ဖိုး: <b>${itemP.toLocaleString()}</b> | ဒလီခ: <b>${feeP.toLocaleString()}</b></p>
                         <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
                     </td>
                     <td class="p-3 text-[11px]">
@@ -1078,6 +1091,9 @@
                 globalTbody.innerHTML = '';
                 ordersData.forEach(o => {
                     const collectedItem = calculateCollectedItemPrice(o);
+                    const itemP = parseInt(o.itemPrice) || 0;
+                    const feeP = parseInt(o.deliveryFee) || 0;
+
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-gray-50 transition";
                     tr.innerHTML = `
@@ -1091,7 +1107,7 @@
                         </td>
                         <td class="p-3.5">
                             <p class="font-bold">${o.item}</p>
-                            <p class="text-gray-700">ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
+                            <p class="text-gray-700">ကုန်ဖိုး: <b>${itemP.toLocaleString()}</b> | ဒလီခ: <b>${feeP.toLocaleString()}</b></p>
                             <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
                         </td>
                         <td class="p-3.5">
@@ -1182,6 +1198,9 @@
                         availTbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">လက်ရှိတွင် အပ်နှံထားသော အော်ဒါအသစ် လတ်တလော မရှိပါ။</td></tr>`;
                     } else {
                         availableOrders.forEach(o => {
+                            const itemP = parseInt(o.itemPrice) || 0;
+                            const feeP = parseInt(o.deliveryFee) || 0;
+
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
                                 <td class="p-2.5 font-bold text-indigo-900">#${o.code}</td>
@@ -1190,7 +1209,7 @@
                                     <p class="text-gray-600">➡️ ${o.receiver} (${o.receiverAddress || '-'})</p>
                                 </td>
                                 <td class="p-2.5 font-semibold">
-                                    ကုန်ဖိုး: ${parseInt(o.itemPrice).toLocaleString()} | ဒလီခ: ${parseInt(o.deliveryFee).toLocaleString()}
+                                    ကုန်ဖိုး: ${itemP.toLocaleString()} | ဒလီခ: ${feeP.toLocaleString()}
                                 </td>
                                 <td class="p-2.5">
                                     ${getPaymentBadge(o.payment)}
@@ -1240,7 +1259,9 @@
                     } else {
                         myOrders.forEach(o => {
                             const collectedItem = calculateCollectedItemPrice(o);
-                            
+                            const itemP = parseInt(o.itemPrice) || 0;
+                            const feeP = parseInt(o.deliveryFee) || 0;
+
                             const callBtn = o.receiverPhone ? `
                                 <a href="tel:${o.receiverPhone}" class="inline-flex items-center gap-1 bg-emerald-600 text-white px-2 py-1 rounded font-bold text-[11px] shadow hover:bg-emerald-700">
                                     <i class="fa-solid fa-phone"></i> Call
@@ -1278,7 +1299,7 @@
                                     </div>
                                 </td>
                                 <td class="p-3">
-                                    <p>ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
+                                    <p>ကုန်ဖိုး: <b>${itemP.toLocaleString()}</b> | ဒလီခ: <b>${feeP.toLocaleString()}</b></p>
                                     <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
                                     <p class="text-[10px] text-indigo-900 font-semibold">💳 ${o.paymentType}</p>
                                 </td>
