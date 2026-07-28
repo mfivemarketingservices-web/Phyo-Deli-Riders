@@ -624,8 +624,10 @@
         let loggedInRole = null; 
         let currentRiderName = '';
 
-        // ကောက်ခံရရှိသည့် ကုန်ဖိုး
+        // ကောက်ခံရရှိသည့် ကုန်ဖိုး ( status က 'ပို့ဆောင်ပြီး' ဖြစ်မှ ပေါင်းမည်)
         function calculateCollectedItemPrice(order) {
+            if (order.status !== "ပို့ဆောင်ပြီး") return 0;
+
             const price = parseInt(order.itemPrice) || 0;
             const pType = order.paymentType || "";
 
@@ -637,6 +639,8 @@
 
         // ဝန်ထမ်းရှင်းကုန်ဖိုး (ဝန်ထမ်း မည်သည့်နည်းလမ်းဖြင့်မဆို ရှင်းခဲ့သည့် ပစ္စည်းဖိုး)
         function calculateStaffPrePayItem(order) {
+            if (order.status !== "ပို့ဆောင်ပြီး") return 0;
+
             const price = parseInt(order.itemPrice) || 0;
             const who = order.shopPrePayer || "";
             if (who.includes("ဝန်ထမ်း")) {
@@ -647,6 +651,8 @@
 
         // ရုံးရှင်းကုန်ဖိုး (ရုံးမှ မည်သည့်နည်းလမ်းဖြင့်မဆို ရှင်းခဲ့သည့် ပစ္စည်းဖိုး)
         function calculateOfficePrePayItem(order) {
+            if (order.status !== "ပို့ဆောင်ပြီး") return 0;
+
             const price = parseInt(order.itemPrice) || 0;
             const who = order.shopPrePayer || "";
             if (who.includes("ရုံး")) {
@@ -657,6 +663,13 @@
 
         // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး = ကောက်ခံရရှိ ကုန်ဖိုး - ဝန်ထမ်းရှင်း ကုန်ဖိုး
         function calculateRiderHandoverToOffice(order) {
+            if (order.status !== "ပို့ဆောင်ပြီး") return 0;
+
+            // ဝယ်သူမှ Kpay / Wave ဖြင့် ပေးချေထားပါက Rider ထံ Cash မရှိပါ
+            if (order.payment === "Kpay" || order.payment === "Wave") {
+                return 0;
+            }
+
             const collected = calculateCollectedItemPrice(order);
             const staffPrePay = calculateStaffPrePayItem(order);
             return Math.max(0, collected - staffPrePay);
@@ -664,6 +677,8 @@
 
         // ဝယ်ယူသူထံမှ ကောက်ခံရရှိသည့် ဒလီခ စုစုပေါင်း
         function calculateCollectedDeliveryFee(order) {
+            if (order.status !== "ပို့ဆောင်ပြီး") return 0;
+
             const fee = parseInt(order.deliveryFee) || 0;
             const pType = order.paymentType || "";
             
@@ -675,20 +690,19 @@
 
         // ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း
         function calculateRiderFeeHandoverToOffice(order) {
+            if (order.status !== "ပို့ဆောင်ပြီး") return 0;
+
             const fee = parseInt(order.deliveryFee) || 0;
             const pType = order.paymentType || "";
             const payMethod = order.payment || "";
-            const payerType = order.payerType || "";
 
+            // ကောက်ခံရန် မလိုပါက 0 ပြန်မည်
             if (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
             }
 
+            // Kpay / Wave ဖြင့် ပေးပါက Rider လက်ထဲ Cash မကျန်နိုင်ပါ
             if (payMethod === "Kpay" || payMethod === "Wave") {
-                return 0;
-            }
-
-            if (payerType === "နောက်မှရှင်းမည်") {
                 return 0;
             }
 
@@ -699,7 +713,9 @@
         function calculatePendingShopPay(order) {
             const price = parseInt(order.itemPrice) || 0;
             const payerType = order.payerType || "";
-            if (payerType === "နောက်မှရှင်းမည်") {
+            const shopPrePayer = order.shopPrePayer || "";
+
+            if (payerType === "နောက်မှရှင်းမည်" || shopPrePayer.includes("ရုံး")) {
                 return price;
             }
             return 0;
@@ -709,9 +725,11 @@
         function calculatePendingShopFee(order) {
             const fee = parseInt(order.deliveryFee) || 0;
             const payerType = order.payerType || "";
+            const shopPrePayer = order.shopPrePayer || "";
             const pType = order.paymentType || "";
 
-            if (payerType === "နောက်မှရှင်းမည်" && (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး")) {
+            if ((payerType === "နောက်မှရှင်းမည်" || shopPrePayer.includes("ရုံး")) && 
+                (pType === "ကုန်ဖိုးသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး")) {
                 return fee;
             }
             return 0;
