@@ -207,6 +207,17 @@
                 <h2 class="text-xl font-bold text-blue-900">🏛️ Management (အောင်နိုင်ဖြိုး)</h2>
                 <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-semibold">Master Control</span>
             </div>
+            
+            <!-- Admin Approvals Panel -->
+            <div class="bg-white p-4 rounded-xl shadow border border-amber-200 space-y-3">
+                <h3 class="font-bold text-amber-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-check text-amber-600"></i> Rider အလုပ်ချိန်ကျော်လွန်မှု & ရုံးဆင်း ခွင့်ပြုချက်များ (Admin Approvals)
+                </h3>
+                <div id="adminApprovalList" class="text-xs space-y-2">
+                    <!-- Dynamic Approvals Render -->
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-600">
                     <p class="text-xs text-gray-500 uppercase font-semibold">Total Orders</p>
@@ -223,6 +234,16 @@
         <section id="adminSection" class="hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-3">
                 <h2 class="text-xl font-bold text-indigo-900">🖥️ Admin Dispatcher (မေချစ်ပို)</h2>
+            </div>
+
+            <!-- Admin Approvals Panel for Admin Role -->
+            <div class="bg-white p-4 rounded-xl shadow border border-amber-200 space-y-3">
+                <h3 class="font-bold text-amber-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-check text-amber-600"></i> Rider အလုပ်ချိန်ကျော်လွန်မှု & ရုံးဆင်း ခွင့်ပြုချက်များ (Admin Approvals)
+                </h3>
+                <div id="adminApprovalListAdmin" class="text-xs space-y-2">
+                    <!-- Dynamic Approvals Render -->
+                </div>
             </div>
 
             <!-- Order Entry Form -->
@@ -454,10 +475,24 @@
 
         <!-- ================= 5. RIDER DASHBOARD ================= -->
         <section id="riderSection" class="hidden space-y-6">
-            <div class="bg-blue-900 text-white p-4 rounded-lg flex justify-between items-center shadow">
+            <!-- Rider Header with Clock In / Clock Out Control -->
+            <div class="bg-blue-900 text-white p-4 rounded-lg flex flex-col md:flex-row justify-between items-center gap-3 shadow">
                 <div>
                     <h2 class="font-bold text-lg" id="riderDisplayName">Rider</h2>
-                    <p class="text-xs text-blue-200">Active Delivery Rider</p>
+                    <p class="text-xs text-blue-200" id="riderShiftStatusText">Status: Off-Duty (ရုံးမတက်ရသေးပါ)</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div id="shiftTimerDisplay" class="text-center bg-blue-950 px-3 py-1.5 rounded border border-blue-700 text-xs font-mono">
+                        <div>အလုပ်ချိန်: <span id="shiftTimer" class="font-bold text-amber-400">00:00:00</span></div>
+                        <div class="text-[10px] text-gray-300">(Max 10 Hours)</div>
+                    </div>
+                    <button id="clockInBtn" onclick="clockInRider()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-play"></i> ရုံးတက်မည် (Clock In)
+                    </button>
+                    <button id="clockOutBtn" onclick="clockOutRider()" class="hidden bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-stop"></i> ရုံးဆင်းမည် (Clock Out)
+                    </button>
                 </div>
             </div>
 
@@ -491,6 +526,107 @@
                 <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-rose-900 shadow-sm">
                     <p class="text-xs font-bold text-rose-700"><i class="fa-solid fa-store"></i> ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ဒလီခနှုတ်ပြီး)</p>
                     <p id="riderPersonalPendingShopPay" class="text-xl font-bold mt-1 text-rose-900">0 MMK</p>
+                </div>
+            </div>
+
+            <!-- NEW SECTION 3: RIDER PAYROLL & SALARY CALCULATOR VIEW -->
+            <div class="bg-white p-5 rounded-xl shadow border border-indigo-200 space-y-4">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="font-bold text-md text-indigo-900 flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> 💰 လုပ်ခ နှင့် ဘောနပ်စ် တွက်ချက်မှု စာရင်း (Rider Payroll & Salary View)
+                    </h3>
+                    <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2.5 py-1 rounded-full">Auto Calculated</span>
+                </div>
+
+                <!-- Live Hours Worked & Total Delivery Count -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 bg-indigo-50/50 p-3 rounded-lg border border-indigo-100 text-xs">
+                    <div>
+                        <span class="text-gray-500">ယနေ့ လုပ်ဆောင်ချိန်:</span>
+                        <p class="font-bold text-indigo-900 text-sm" id="payrollTodayHours">0 နာရီ</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">ယနေ့ ပို့ဆောင်ပြီး အကြောင်း:</span>
+                        <p class="font-bold text-indigo-900 text-sm" id="payrollTodayTrips">0 ကြောင်း</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">ဒီလ စုစုပေါင်း အလုပ်ချိန်:</span>
+                        <p class="font-bold text-indigo-900 text-sm" id="payrollMonthHours">0 နာရီ</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">ဒီလ စုစုပေါင်း အကြောင်း:</span>
+                        <p class="font-bold text-indigo-900 text-sm" id="payrollMonthTrips">0 ကြောင်း</p>
+                    </div>
+                </div>
+
+                <!-- Salary Breakdown Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border">
+                        <thead class="bg-gray-100 font-bold text-gray-700 uppercase">
+                            <tr>
+                                <th class="p-2 border">အမျိုးအစား / ခေါင်းစဉ်</th>
+                                <th class="p-2 border">တွက်ချက်မှု နှုန်းထား (Rate)</th>
+                                <th class="p-2 border text-right">ယနေ့ ရရှိငွေ (Today)</th>
+                                <th class="p-2 border text-right bg-emerald-50 text-emerald-900">ဒီလ ခန့်မှန်း ရရှိငွေ (Monthly)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y font-semibold text-gray-700">
+                            <tr>
+                                <td class="p-2 border font-bold">အခြေခံလုပ်ခ (Basic Pay)</td>
+                                <td class="p-2 border text-gray-500">1 hr = 1,100 ကျပ် (၁ လ ၁ ကြိမ်)</td>
+                                <td class="p-2 border text-right" id="payTodayBasic">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthBasic">0 MMK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border font-bold">ဆိုင်ကယ်ပြုပြင်စရိတ် (Bike Maintenance)</td>
+                                <td class="p-2 border text-gray-500">1 hr = 250 ကျပ် (၁ လ ၁ ကြိမ်)</td>
+                                <td class="p-2 border text-right" id="payTodayBike">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthBike">0 MMK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border font-bold">ဖုန်းဘေလ်စရိတ် (Phone Bill)</td>
+                                <td class="p-2 border text-gray-500">1 hr = 85 ကျပ် (၁ လ ၁ ကြိမ်)</td>
+                                <td class="p-2 border text-right" id="payTodayPhone">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthPhone">0 MMK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border font-bold">ရက်မှန်ကြေး ဘောနပ်စ် (Attendance Bonus)</td>
+                                <td class="p-2 border text-gray-500">၂၆ ရက်ပြည့်ပါက 1 hr = 85 ကျပ် (၁ လ ၁ ကြိမ်)</td>
+                                <td class="p-2 border text-right" id="payTodayAttendance">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthAttendance">0 MMK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border font-bold">ဆီစရိတ် နာရီအလိုက် (Fuel Hourly)</td>
+                                <td class="p-2 border text-gray-500">1 hr = 666 ကျပ် (၁ ပတ် ၁ ကြိမ်)</td>
+                                <td class="p-2 border text-right" id="payTodayFuelHr">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthFuelHr">0 MMK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border font-bold">ဆီစရိတ် အကြောင်းအလိုက် (Fuel Per Trip)</td>
+                                <td class="p-2 border text-gray-500">၁ ကြောင်း = 300 ကျပ် (၁ ပတ် ၁ ကြိမ်)</td>
+                                <td class="p-2 border text-right" id="payTodayFuelTrip">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthFuelTrip">0 MMK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border font-bold">ပို့ဆောင်ခ ကော်မရှင် (Delivery Commission)</td>
+                                <td class="p-2 border text-gray-500">1hr လျှင် 1 trip=50%, 2 trips=75%, 3+ trips=100%</td>
+                                <td class="p-2 border text-right" id="payTodayCommission">0 MMK</td>
+                                <td class="p-2 border text-right text-emerald-800" id="payMonthCommission">0 MMK</td>
+                            </tr>
+                            <tr class="bg-amber-50">
+                                <td class="p-2 border font-bold text-amber-900">Target & Special Bonuses (Daily/Monthly Target & Holiday)</td>
+                                <td class="p-2 border text-gray-500">1hr 3ကြောင်းအထက်/၇၈ကြောင်းကျော် (+150ကျပ်/trip) စသည်</td>
+                                <td class="p-2 border text-right text-amber-800 font-bold" id="payTodayBonus">0 MMK</td>
+                                <td class="p-2 border text-right text-amber-900 font-bold" id="payMonthBonus">0 MMK</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-emerald-100 font-bold text-emerald-950 text-xs">
+                            <tr>
+                                <td colspan="2" class="p-2.5 border text-right">စုစုပေါင်း ခန့်မှန်းရရှိငွေ (Total Estimated Earnings):</td>
+                                <td class="p-2.5 border text-right text-indigo-900" id="payTodayTotal">0 MMK</td>
+                                <td class="p-2.5 border text-right text-emerald-900 text-sm" id="payMonthTotal">0 MMK</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
 
@@ -533,6 +669,7 @@
                                 <th class="p-3">ဝယ်သူပေးချေမှု (Payment)</th>
                                 <th class="p-3">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ် (Shop Pre-Pay)</th>
                                 <th class="p-3 text-center">Status ပြောင်းရန်</th>
+                                <th class="p-3 text-center">Action (Edit)</th>
                             </tr>
                         </thead>
                         <tbody id="riderPersonalTableBody" class="divide-y text-xs">
@@ -543,6 +680,65 @@
             </div>
         </section>
 
+    </div>
+
+    <!-- Edit Order Modal (For Rider & Admin) -->
+    <div id="editOrderModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden border border-amber-300 max-h-[90vh] flex flex-col">
+            <div class="bg-amber-500 text-gray-900 p-4 font-bold text-base flex justify-between items-center">
+                <span><i class="fa-solid fa-pen-to-square"></i> အော်ဒါအချက်အလက် ပြင်ဆင်ရန် (<span id="modalOrderCodeText"></span>)</span>
+                <button onclick="closeEditModal()" class="text-gray-900 hover:text-red-700 text-xl font-bold">&times;</button>
+            </div>
+            
+            <div class="p-4 space-y-3 overflow-y-auto text-xs font-semibold">
+                <input type="hidden" id="modalOrderCode">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-600">ပေးပို့သူ (Sender)</label>
+                        <input type="text" id="modalSender" class="w-full p-2 border rounded mt-1 font-bold">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">လက်ခံသူ (Receiver)</label>
+                        <input type="text" id="modalReceiver" class="w-full p-2 border rounded mt-1 font-bold">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">လက်ခံသူ ဖုန်းနံပါတ်</label>
+                        <input type="text" id="modalReceiverPhone" class="w-full p-2 border rounded mt-1">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">လက်ခံသူ လိပ်စာ</label>
+                        <input type="text" id="modalReceiverAddress" class="w-full p-2 border rounded mt-1">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">ကုန်ပစ္စည်းအမည်</label>
+                        <input type="text" id="modalItem" class="w-full p-2 border rounded mt-1">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">ကုန်ဖိုး (MMK)</label>
+                        <input type="number" id="modalItemPrice" class="w-full p-2 border rounded mt-1">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">ဒလီခ (MMK)</label>
+                        <input type="number" id="modalDeliveryFee" class="w-full p-2 border rounded mt-1">
+                    </div>
+                    <div>
+                        <label class="text-gray-600">ဝယ်သူပေးချေသည့်ပုံစံ (Payment)</label>
+                        <select id="modalPayment" class="w-full p-2 border rounded mt-1 font-bold">
+                            <option value="ငွေသား">ငွေသား</option>
+                            <option value="Kpay">Kpay</option>
+                            <option value="Wave">Wave</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-gray-50 border-t flex justify-end gap-2">
+                <button onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-bold">မလုပ်တော့ပါ</button>
+                <button onclick="saveModalOrderEdit()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-900 rounded-lg font-bold shadow">
+                    <i class="fa-solid fa-floppy-disk"></i> သိမ်းဆည်းမည်
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript Logic -->
@@ -618,6 +814,23 @@
         let loggedInRole = null; 
         let currentRiderName = '';
 
+        // Attendance & Shift Control System Variables
+        let riderShifts = {}; // { riderName: { isOnDuty: false, clockInTime: timestamp, totalSeconds: 0, adminApprovedOvertime: false } }
+        let pendingApprovals = []; // [ { id, riderName, type: 'overtime' | 'clockout', reason, status: 'pending' } ]
+        let shiftTimerInterval = null;
+
+        function getRiderShift(riderName) {
+            if (!riderShifts[riderName]) {
+                riderShifts[riderName] = {
+                    isOnDuty: false,
+                    clockInTime: null,
+                    totalSeconds: 0,
+                    adminApprovedOvertime: false
+                };
+            }
+            return riderShifts[riderName];
+        }
+
         // ကောက်ခံရရှိသည့် ကုန်ဖိုး ( status က 'ပို့ဆောင်ပြီး' ဖြစ်မှ ပေါင်းမည်)
         function calculateCollectedItemPrice(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
@@ -631,7 +844,7 @@
             return price;
         }
 
-        // ဝန်ထမ်းရှင်း ကုန်ဖိုး (ဒလီခ နှုတ်ရန်လိုပါက နှုတ်ပြီး ရှင်းပေးသည့်ပမာဏ)
+        // ဝန်ထမ်းရှင်း ကုန်ဖိုး
         function calculateStaffPrePayItem(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
 
@@ -667,7 +880,7 @@
             return 0;
         }
 
-        // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး = ဝယ်သူထံမှ ကောက်ခံရရှိ ကုန်ဖိုး - ဝန်ထမ်းဆိုင်သို့ ကြိုရှင်းပေးခဲ့သည့် ကုန်ဖိုး
+        // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး
         function calculateRiderHandoverToOffice(order) {
             if (order.status !== "ပို့ဆောင်ပြီး") return 0;
 
@@ -712,7 +925,7 @@
             return fee;
         }
 
-        // 🏪 ဆိုင်သို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ကုန်ဖိုးသာကောက်ရမည်ဖြစ်ပါက ဒလီခ နှုတ်ပေးမည်)
+        // 🏪 ဆိုင်သို့ ရှင်းရန်ကျန် ကုန်ဖိုး
         function calculatePendingShopPay(order) {
             const price = parseInt(order.itemPrice) || 0;
             const fee = parseInt(order.deliveryFee) || 0;
@@ -729,7 +942,6 @@
             return 0;
         }
 
-        // ဝယ်သူပေးချေမှု (Payment Method) Badge
         function getPaymentBadge(payment) {
             const p = payment || 'ငွေသား';
             if (p === 'Kpay') {
@@ -741,7 +953,6 @@
             }
         }
 
-        // ဆိုင်သို့ ရှင်းပေးခဲ့သည့် စနစ် Badge
         function getShopPrePayBadge(shopPrePayer, payerType) {
             const who = shopPrePayer || 'ဝန်ထမ်း(Rider)';
             const type = payerType || 'ငွေသား';
@@ -856,6 +1067,7 @@
         function logout() {
             loggedInRole = null;
             currentRiderName = '';
+            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
             
             document.getElementById('headerActions').classList.add('hidden');
             document.getElementById('dashboardBtn').classList.add('hidden');
@@ -867,6 +1079,287 @@
             const contactCard = document.getElementById('contactCardContainer');
             if (marquee) marquee.classList.remove('hidden');
             if (contactCard) contactCard.classList.remove('hidden');
+        }
+
+        /* ================= 1. RIDER EDIT PERMISSION (MODAL) ================= */
+        function openRiderEditModal(code) {
+            const order = ordersData.find(o => o.code === code);
+            if (!order) return;
+
+            document.getElementById('modalOrderCode').value = order.code;
+            document.getElementById('modalOrderCodeText').innerText = order.code;
+            document.getElementById('modalSender').value = order.sender || '';
+            document.getElementById('modalReceiver').value = order.receiver || '';
+            document.getElementById('modalReceiverPhone').value = order.receiverPhone || '';
+            document.getElementById('modalReceiverAddress').value = order.receiverAddress || '';
+            document.getElementById('modalItem').value = order.item || '';
+            document.getElementById('modalItemPrice').value = order.itemPrice || 0;
+            document.getElementById('modalDeliveryFee').value = order.deliveryFee || 0;
+            document.getElementById('modalPayment').value = order.payment || 'ငွေသား';
+
+            document.getElementById('editOrderModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editOrderModal').classList.add('hidden');
+        }
+
+        function saveModalOrderEdit() {
+            const code = document.getElementById('modalOrderCode').value;
+            const order = ordersData.find(o => o.code === code);
+            if (!order) return;
+
+            order.sender = document.getElementById('modalSender').value;
+            order.receiver = document.getElementById('modalReceiver').value;
+            order.receiverPhone = document.getElementById('modalReceiverPhone').value;
+            order.receiverAddress = document.getElementById('modalReceiverAddress').value;
+            order.item = document.getElementById('modalItem').value;
+            order.itemPrice = document.getElementById('modalItemPrice').value;
+            order.deliveryFee = document.getElementById('modalDeliveryFee').value;
+            order.payment = document.getElementById('modalPayment').value;
+
+            alert(`အော်ဒါ [${code}] အချက်အလက်များကို ပြင်ဆင်ပြီးပါပြီ။`);
+            closeEditModal();
+            renderTables();
+        }
+
+        /* ================= 2. SHIFT & ATTENDANCE CONTROL ================= */
+        function clockInRider() {
+            const shift = getRiderShift(currentRiderName);
+            shift.isOnDuty = true;
+            shift.clockInTime = new Date();
+            
+            startShiftTimer();
+            alert(`${currentRiderName} ရုံးတက်ပါပြီ (Clock In Successful)`);
+            renderTables();
+        }
+
+        function clockOutRider() {
+            // Money Settlement Check
+            const myOrders = ordersData.filter(o => o.rider === currentRiderName && o.status === 'ပို့ဆောင်ပြီး');
+            const pendingHandover = myOrders.reduce((sum, o) => sum + calculateRiderHandoverToOffice(o) + calculateRiderFeeHandoverToOffice(o), 0);
+
+            if (pendingHandover > 0) {
+                // Request Admin Approval
+                const req = pendingApprovals.find(a => a.riderName === currentRiderName && a.type === 'clockout' && a.status === 'pending');
+                if (!req) {
+                    pendingApprovals.push({
+                        id: Date.now(),
+                        riderName: currentRiderName,
+                        type: 'clockout',
+                        reason: `ရုံးအပ်ရန်ကျန်ငွေ (${pendingHandover.toLocaleString()} MMK) ရှိနေ၍ ရုံးဆင်းခွင့် တောင်းဆိုခြင်း`,
+                        status: 'pending'
+                    });
+                }
+                alert(`ငွေစာရင်း ရှင်းလင်းမှု မပြီးပြတ်သေးပါ။ ရုံးအပ်ရန်ကျန်ငွေ (${pendingHandover.toLocaleString()} MMK) ရှိနေသောကြောင့် Admin ထံသို့ ရုံးဆင်းခွင့် ခွင့်ပြုချက် (Approval) တောင်းဆိုထားပါသည်။ Admin ခွင့်ပြုမှသာ ရုံးဆင်းနိုင်မည်။`);
+                renderAdminApprovals();
+                return;
+            }
+
+            const shift = getRiderShift(currentRiderName);
+            shift.isOnDuty = false;
+            shift.adminApprovedOvertime = false;
+            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
+
+            alert(`${currentRiderName} ရုံးဆင်းလိုက်ပါပြီ (Clock Out Successful)`);
+            renderTables();
+        }
+
+        function startShiftTimer() {
+            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
+
+            shiftTimerInterval = setInterval(() => {
+                if (loggedInRole !== 'rider') return;
+                const shift = getRiderShift(currentRiderName);
+                if (!shift.isOnDuty) return;
+
+                shift.totalSeconds += 1;
+                const hrs = Math.floor(shift.totalSeconds / 3600);
+                const mins = Math.floor((shift.totalSeconds % 3600) / 60);
+                const secs = shift.totalSeconds % 60;
+
+                const timeStr = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+                const timerEl = document.getElementById('shiftTimer');
+                if (timerEl) timerEl.innerText = timeStr;
+
+                // 10 Hours Daily Limit Check
+                if (hrs >= 10 && !shift.adminApprovedOvertime) {
+                    shift.isOnDuty = false; // Lock system
+                    alert('တနေ့တာ ရုံးတက်ချိန် ၁၀ နာရီ ပြည့်မြောက်သွားပါပြီ။ စနစ်သုံးစွဲခွင့်ကို အလိုအလျောက် ပိတ်ထားပါသည်။ ဆက်လက်လုပ်ကိုင်လိုပါက Admin/Management ထံမှ Overtime Approval တောင်းဆိုပါ။');
+                    
+                    const req = pendingApprovals.find(a => a.riderName === currentRiderName && a.type === 'overtime' && a.status === 'pending');
+                    if (!req) {
+                        pendingApprovals.push({
+                            id: Date.now(),
+                            riderName: currentRiderName,
+                            type: 'overtime',
+                            reason: `၁၀ နာရီ ကျော်လွန်သွား၍ ဆက်လက် အလုပ်လုပ်ခွင့် တောင်းဆိုခြင်း`,
+                            status: 'pending'
+                        });
+                    }
+                    renderAdminApprovals();
+                    renderTables();
+                }
+
+                // Auto calculate live salary
+                renderRiderPayroll();
+            }, 1000);
+        }
+
+        function renderAdminApprovals() {
+            const containerMgmt = document.getElementById('adminApprovalList');
+            const containerAdmin = document.getElementById('adminApprovalListAdmin');
+
+            const pendingList = pendingApprovals.filter(a => a.status === 'pending');
+            let html = '';
+
+            if (pendingList.length === 0) {
+                html = `<p class="text-gray-400 italic">လက်ရှိ ခွင့်ပြုရန် တောင်းဆိုချက်များ မရှိသေးပါ။</p>`;
+            } else {
+                pendingList.forEach(a => {
+                    html += `
+                        <div class="flex items-center justify-between p-2 bg-amber-50 border border-amber-200 rounded">
+                            <div>
+                                <span class="font-bold text-amber-900">${a.riderName}</span> - 
+                                <span class="text-gray-700">${a.reason}</span>
+                            </div>
+                            <div class="flex gap-1">
+                                <button onclick="approveRiderRequest(${a.id})" class="bg-emerald-600 text-white font-bold px-2 py-1 rounded text-xs hover:bg-emerald-700">Approve ခွင့်ပြုမည်</button>
+                                <button onclick="rejectRiderRequest(${a.id})" class="bg-red-600 text-white font-bold px-2 py-1 rounded text-xs hover:bg-red-700">NOC ငြင်းပယ်မည်</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (containerMgmt) containerMgmt.innerHTML = html;
+            if (containerAdmin) containerAdmin.innerHTML = html;
+        }
+
+        function approveRiderRequest(reqId) {
+            const req = pendingApprovals.find(a => a.id === reqId);
+            if (!req) return;
+
+            req.status = 'approved';
+            const shift = getRiderShift(req.riderName);
+
+            if (req.type === 'overtime') {
+                shift.adminApprovedOvertime = true;
+                shift.isOnDuty = true;
+                alert(`${req.riderName} ၏ ၁၀ နာရီကျော် Overtime သုံးစွဲခွင့်ကို ခွင့်ပြုပေးလိုက်ပါပြီ။`);
+            } else if (req.type === 'clockout') {
+                shift.isOnDuty = false;
+                shift.adminApprovedOvertime = false;
+                alert(`${req.riderName} အား ငွေမရှင်းရသေးသော်လည်း ရုံးဆင်းခွင့် ခွင့်ပြုပေးလိုက်ပါပြီ။`);
+            }
+
+            renderAdminApprovals();
+            renderTables();
+        }
+
+        function rejectRiderRequest(reqId) {
+            const req = pendingApprovals.find(a => a.id === reqId);
+            if (!req) return;
+            req.status = 'rejected';
+            alert(`တောင်းဆိုချက်ကို ငြင်းပယ်လိုက်ပါပြီ။`);
+            renderAdminApprovals();
+        }
+
+        /* ================= 3. RIDER PAYROLL & SALARY AUTO CALCULATOR ================= */
+        function renderRiderPayroll() {
+            if (loggedInRole !== 'rider') return;
+
+            const shift = getRiderShift(currentRiderName);
+            const todayHours = Math.max(1, Math.round(shift.totalSeconds / 3600)); // Minimum 1 hr logic for testing view
+            const completedToday = ordersData.filter(o => o.rider === currentRiderName && o.status === 'ပို့ဆောင်ပြီး');
+            const todayTrips = completedToday.length;
+
+            // Simulated Month Totals (Month = Today + Mock past stats for accuracy)
+            const monthHours = todayHours + 150; // Mock 150 past hrs
+            const monthTrips = todayTrips + 80;   // Mock 80 past trips
+
+            // Calculations Formula Setup
+            const basicPayToday = todayHours * 1100;
+            const basicPayMonth = monthHours * 1100;
+
+            const bikeToday = todayHours * 250;
+            const bikeMonth = monthHours * 250;
+
+            const phoneToday = todayHours * 85;
+            const phoneMonth = monthHours * 85;
+
+            // Attendance Bonus (26 Days active rule: assumed true for month view if >100 hrs)
+            const attendanceToday = todayHours * 85;
+            const attendanceMonth = monthHours >= 100 ? monthHours * 85 : 0;
+
+            // Fuel
+            const fuelHrToday = todayHours * 666;
+            const fuelHrMonth = monthHours * 666;
+
+            const fuelTripToday = todayTrips * 300;
+            const fuelTripMonth = monthTrips * 300;
+
+            // Commission Rate Calc (1hr logic: 1 trip = 50%, 2 trips = 75%, 3+ trips = 100%)
+            let commissionPercent = 0.5;
+            const avgTripsPerHr = todayHours > 0 ? todayTrips / todayHours : 0;
+            if (avgTripsPerHr >= 3) commissionPercent = 1.0;
+            else if (avgTripsPerHr >= 2) commissionPercent = 0.75;
+            else commissionPercent = 0.5;
+
+            let commTodayTotal = 0;
+            completedToday.forEach(o => {
+                let baseComm = 200; // ပုံမှန်
+                if (o.speed === 'အမြန်ပို့') baseComm = 250;
+                if (o.speed === 'အနှေးပို့') baseComm = 150;
+                commTodayTotal += baseComm * commissionPercent;
+            });
+            const commMonthTotal = commTodayTotal + (monthTrips - todayTrips) * 200 * 0.75;
+
+            // Target & Special Bonuses
+            let bonusToday = 0;
+            if (avgTripsPerHr >= 3) {
+                bonusToday += todayTrips * 150; // Daily Target +150
+            }
+            let bonusMonth = bonusToday;
+            if (monthTrips > 78) {
+                bonusMonth += (monthTrips - 78) * 150; // Monthly Target +150
+            }
+
+            // Update UI Elements
+            document.getElementById('payrollTodayHours').innerText = `${todayHours} နာရီ`;
+            document.getElementById('payrollTodayTrips').innerText = `${todayTrips} ကြောင်း`;
+            document.getElementById('payrollMonthHours').innerText = `${monthHours} နာရီ`;
+            document.getElementById('payrollMonthTrips').innerText = `${monthTrips} ကြောင်း`;
+
+            document.getElementById('payTodayBasic').innerText = `${basicPayToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthBasic').innerText = `${basicPayMonth.toLocaleString()} MMK`;
+
+            document.getElementById('payTodayBike').innerText = `${bikeToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthBike').innerText = `${bikeMonth.toLocaleString()} MMK`;
+
+            document.getElementById('payTodayPhone').innerText = `${phoneToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthPhone').innerText = `${phoneMonth.toLocaleString()} MMK`;
+
+            document.getElementById('payTodayAttendance').innerText = `${attendanceToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthAttendance').innerText = `${attendanceMonth.toLocaleString()} MMK`;
+
+            document.getElementById('payTodayFuelHr').innerText = `${fuelHrToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthFuelHr').innerText = `${fuelHrMonth.toLocaleString()} MMK`;
+
+            document.getElementById('payTodayFuelTrip').innerText = `${fuelTripToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthFuelTrip').innerText = `${fuelTripMonth.toLocaleString()} MMK`;
+
+            document.getElementById('payTodayCommission').innerText = `${Math.round(commTodayTotal).toLocaleString()} MMK`;
+            document.getElementById('payMonthCommission').innerText = `${Math.round(commMonthTotal).toLocaleString()} MMK`;
+
+            document.getElementById('payTodayBonus').innerText = `${bonusToday.toLocaleString()} MMK`;
+            document.getElementById('payMonthBonus').innerText = `${bonusMonth.toLocaleString()} MMK`;
+
+            const todayTotal = basicPayToday + bikeToday + phoneToday + attendanceToday + fuelHrToday + fuelTripToday + commTodayTotal + bonusToday;
+            const monthTotal = basicPayMonth + bikeMonth + phoneMonth + attendanceMonth + fuelHrMonth + fuelTripMonth + commMonthTotal + bonusMonth;
+
+            document.getElementById('payTodayTotal').innerText = `${Math.round(todayTotal).toLocaleString()} MMK`;
+            document.getElementById('payMonthTotal').innerText = `${Math.round(monthTotal).toLocaleString()} MMK`;
         }
 
         function saveAdminOrder() {
@@ -1041,6 +1534,13 @@
         }
 
         function acceptOrderByRider(code) {
+            // Check shift status
+            const shift = getRiderShift(currentRiderName);
+            if (!shift.isOnDuty) {
+                alert('အော်ဒါလက်ခံရန်အတွက် ရှေးဦးစွာ "ရုံးတက်မည် (Clock In)" ခလုတ်ကို နှိပ်ပါ။');
+                return;
+            }
+
             const order = ordersData.find(o => o.code === code);
             if (!order) return;
 
@@ -1053,6 +1553,12 @@
         }
 
         function updateRiderStatus(code, newStatus) {
+            const shift = getRiderShift(currentRiderName);
+            if (!shift.isOnDuty) {
+                alert('အော်ဒါ Status ပြောင်းလဲရန်အတွက် "ရုံးတက်မည် (Clock In)" ပြုလုပ်ထားရန် လိုအပ်ပါသည်။');
+                return;
+            }
+
             const order = ordersData.find(o => o.code === code);
             if (!order) return;
 
@@ -1138,6 +1644,8 @@
         }
 
         function renderTables() {
+            renderAdminApprovals();
+
             const globalTbody = document.getElementById('globalOrderTableBody');
             if (globalTbody) {
                 globalTbody.innerHTML = '';
@@ -1238,6 +1746,27 @@
             renderAdminTable();
 
             if (loggedInRole === 'rider') {
+                const shift = getRiderShift(currentRiderName);
+                
+                // Shift Status UI Update
+                const clockInBtn = document.getElementById('clockInBtn');
+                const clockOutBtn = document.getElementById('clockOutBtn');
+                const shiftStatusText = document.getElementById('riderShiftStatusText');
+
+                if (shift.isOnDuty) {
+                    clockInBtn.classList.add('hidden');
+                    clockOutBtn.classList.remove('hidden');
+                    shiftStatusText.innerText = 'Status: On-Duty (ရုံးတက်ထားပါသည်)';
+                    shiftStatusText.className = 'text-xs text-emerald-300 font-bold';
+                } else {
+                    clockInBtn.classList.remove('hidden');
+                    clockOutBtn.classList.add('hidden');
+                    shiftStatusText.innerText = 'Status: Off-Duty (ရုံးမတက်ရသေးပါ)';
+                    shiftStatusText.className = 'text-xs text-rose-300 font-bold';
+                }
+
+                renderRiderPayroll();
+
                 const availTbody = document.getElementById('availableOrdersTableBody');
                 if (availTbody) {
                     availTbody.innerHTML = '';
@@ -1301,7 +1830,7 @@
                     document.getElementById('riderPersonalPendingShopPay').innerText = `${totalPendingShopPay.toLocaleString()} MMK`;
 
                     if (myOrders.length === 0) {
-                        riderTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
+                        riderTbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
                     } else {
                         myOrders.forEach(o => {
                             const collectedItem = calculateCollectedItemPrice(o);
@@ -1355,6 +1884,11 @@
                                 </td>
                                 <td class="p-3 text-center">
                                     ${riderStatusSelect}
+                                </td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openRiderEditModal('${o.code}')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 px-2.5 py-1.5 rounded font-bold text-xs shadow flex items-center justify-center gap-1 mx-auto">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </button>
                                 </td>
                             `;
                             riderTbody.appendChild(tr);
