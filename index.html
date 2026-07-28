@@ -55,7 +55,7 @@
     </div>
 
     <!-- Main Content Container -->
-    <div class="max-w-6xl mx-auto p-4 space-y-6">
+    <div class="max-w-7xl mx-auto p-4 space-y-6">
 
         <!-- Contact Support Card -->
         <div id="contactCardContainer" class="bg-white p-5 rounded-2xl shadow-md border border-amber-200">
@@ -138,7 +138,10 @@
                             <tr>
                                 <th class="p-2.5">Rider အမည်</th>
                                 <th class="p-2.5 text-center">ပို့ပြီး အော်ဒါ အရေအတွက်</th>
-                                <th class="p-2.5 text-right">ဆိုင်သို့ ရှင်းရမည့် စုစုပေါင်း (Net Pay to Shop)</th>
+                                <th class="p-2.5 text-right">ကောက်ခံရရှိသည့် ကုန်ဖိုးစုစုပေါင်း</th>
+                                <th class="p-2.5 text-right">ဝန်ထမ်းရှင်း ကုန်ဖိုး</th>
+                                <th class="p-2.5 text-right">ရုံးရှင်း ကုန်ဖိုး</th>
+                                <th class="p-2.5 text-right bg-amber-100 text-amber-900">ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုးစုစုပေါင်း</th>
                                 <th class="p-2.5 text-right">ကောက်ခံရရှိ ဒလီခ စုစုပေါင်း</th>
                             </tr>
                         </thead>
@@ -250,7 +253,6 @@
                         </select>
                     </div>
 
-                    <!-- အလေးချိန်ပိုနှင့် ခရီးဝေးပို့ Dropdown -->
                     <div>
                         <label class="text-xs font-bold text-gray-600">အလေးချိန်ပိုနှင့် ခရီးဝေးပို့</label>
                         <select id="weightAndDistance" class="w-full p-2 border rounded text-sm mt-1 font-bold text-amber-900 bg-amber-50">
@@ -319,6 +321,7 @@
                             <option value="ကုန်ဖိုးသာကောက်ရမည်">ကုန်ဖိုးသာကောက်ရမည်</option>
                             <option value="ဒလီခသာကောက်ရမည်">ဒလီခသာကောက်ရမည်</option>
                             <option value="ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး">ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး</option>
+
                             <option value="ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး">ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး</option>
                         </select>
                     </div>
@@ -332,7 +335,7 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-gray-600">Payment (ဝယ်သူပေးေချသည့်ပုံစံ)</label>
+                        <label class="text-xs font-bold text-gray-600">Payment (ဝယ်သူပေးချေသည့်ပုံစံ)</label>
                         <select id="payment" class="w-full p-2 border rounded text-sm mt-1 font-bold">
                             <option value="ငွေသား">ငွေသား</option>
                             <option value="Kpay">Kpay</option>
@@ -410,7 +413,7 @@
                                 <th class="p-3">Order Code / Date</th>
                                 <th class="p-3">Category / Speed / အလေးချိန်နှင့်ခရီးဝေး</th>
                                 <th class="p-3">ပေးပို့သူ / လက်ခံသူ</th>
-                                <th class="p-3">ကုန်ဖိုး / ဒလီခ / Net Pay to Shop</th>
+                                <th class="p-3">ကုန်ဖိုး / ဒလီခ / ကောက်ခံရရှိကုန်ဖိုး</th>
                                 <th class="p-3">ဝယ်သူထံမှ ကောက်ခံမှု (Customer Pay)</th>
                                 <th class="p-3">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ် (Shop Pre-Pay)</th>
                                 <th class="p-3 text-center">Status</th>
@@ -436,18 +439,26 @@
             </div>
 
             <!-- Rider Personal Summary Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                 <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl text-emerald-900 shadow-sm">
                     <p class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-circle-check"></i> ပို့ဆောင်ပြီး အော်ဒါ စုစုပေါင်း</p>
-                    <p id="riderPersonalCount" class="text-2xl font-bold mt-1">0 စောင်</p>
+                    <p id="riderPersonalCount" class="text-xl font-bold mt-1">0 စောင်</p>
                 </div>
                 <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-amber-900 shadow-sm">
-                    <p class="text-xs font-bold text-amber-700"><i class="fa-solid fa-store"></i> ဆိုင်သို့ ရှင်းပေးရမည့် စုစုပေါင်း (Net Pay)</p>
-                    <p id="riderPersonalShopPay" class="text-2xl font-bold mt-1">0 MMK</p>
+                    <p class="text-xs font-bold text-amber-700"><i class="fa-solid fa-store"></i> ကောက်ခံရရှိသည့် ကုန်ဖိုးစုစုပေါင်း</p>
+                    <p id="riderPersonalCollectedItem" class="text-xl font-bold mt-1">0 MMK</p>
                 </div>
-                <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl text-indigo-900 shadow-sm">
-                    <p class="text-xs font-bold text-indigo-700"><i class="fa-solid fa-hand-holding-dollar"></i> ကောက်ခံရရှိ ဒလီခ စုစုပေါင်း</p>
-                    <p id="riderPersonalFees" class="text-2xl font-bold mt-1">0 MMK</p>
+                <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-xl text-purple-900 shadow-sm">
+                    <p class="text-xs font-bold text-purple-700"><i class="fa-solid fa-user-gear"></i> ဝန်ထမ်းရှင်း ကုန်ဖိုး</p>
+                    <p id="riderPersonalStaffPrePay" class="text-xl font-bold mt-1">0 MMK</p>
+                </div>
+                <div class="bg-sky-50 border border-sky-200 p-3.5 rounded-xl text-sky-900 shadow-sm">
+                    <p class="text-xs font-bold text-sky-700"><i class="fa-solid fa-building"></i> ရုံးရှင်း ကုန်ဖိုး</p>
+                    <p id="riderPersonalOfficePrePay" class="text-xl font-bold mt-1">0 MMK</p>
+                </div>
+                <div class="bg-amber-100 border border-amber-300 p-3.5 rounded-xl text-amber-950 shadow-sm">
+                    <p class="text-xs font-bold text-amber-800"><i class="fa-solid fa-hand-holding-dollar"></i> ရုံးသို့ အပ်နှံရန် ကုန်ဖိုးစုစုပေါင်း</p>
+                    <p id="riderPersonalHandover" class="text-xl font-bold mt-1 text-amber-900">0 MMK</p>
                 </div>
             </div>
 
@@ -486,7 +497,7 @@
                             <tr>
                                 <th class="p-3">အော်ဒါကုတ်</th>
                                 <th class="p-3">ပေးပို့သူ / လက်ခံသူ / ဆက်သွယ်ရန်</th>
-                                <th class="p-3">ကုန်ဖိုး / ဒလီခ / ဆိုင်ရှင်းငွေ</th>
+                                <th class="p-3">ကုန်ဖိုး / ဒလီခ / ကောက်ခံရရှိကုန်ဖိုး</th>
                                 <th class="p-3">ဝယ်သူပေးချေမှု (Payment)</th>
                                 <th class="p-3">ဆိုင်သို့ ရှင်းပေးခဲ့သည့်စနစ် (Shop Pre-Pay)</th>
                                 <th class="p-3 text-center">Status ပြောင်းရန်</th>
@@ -575,24 +586,42 @@
         let loggedInRole = null; 
         let currentRiderName = '';
 
-        function calculateShopPay(order) {
+        // ကောက်ခံရရှိသည့် ကုန်ဖိုး
+        function calculateCollectedItemPrice(order) {
             const price = parseInt(order.itemPrice) || 0;
-            const fee = parseInt(order.deliveryFee) || 0;
             const pType = order.paymentType || "";
 
-            if (pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
+            if (pType === "ဒလီခသာကောက်ရမည်" || pType === "ဘာမှကောက်ရန်မလိုဆိုင်သို့ရှင်းပြီး" || pType === "ဘာမှကောက်ရန်မလိုရုံးသို့ရှင်းပြီး") {
                 return 0;
-            }
-            if (pType === "ဒလီခသာကောက်ရမည်") {
-                return 0;
-            }
-            if (pType === "ကုန်ဖိုးသာကောက်ရမည်") {
-                return Math.max(0, price - fee);
-            }
-            if (pType === "ကုန်ဖိုး+ဒလီခ ၂မျိုးလုံးကောက်ရမည်") {
-                return price;
             }
             return price;
+        }
+
+        // ဝန်ထမ်းရှင်းကုန်ဖိုး (ဝန်ထမ်း မည်သည့်နည်းလမ်းဖြင့်မဆို ရှင်းခဲ့သည့် ပစ္စည်းဖိုး)
+        function calculateStaffPrePayItem(order) {
+            const price = parseInt(order.itemPrice) || 0;
+            const who = order.shopPrePayer || "";
+            if (who.includes("ဝန်ထမ်း")) {
+                return price;
+            }
+            return 0;
+        }
+
+        // ရုံးရှင်းကုန်ဖိုး (ရုံးမှ မည်သည့်နည်းလမ်းဖြင့်မဆို ရှင်းခဲ့သည့် ပစ္စည်းဖိုး)
+        function calculateOfficePrePayItem(order) {
+            const price = parseInt(order.itemPrice) || 0;
+            const who = order.shopPrePayer || "";
+            if (who.includes("ရုံး")) {
+                return price;
+            }
+            return 0;
+        }
+
+        // ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုး = ကောက်ခံရရှိ ကုန်ဖိုး - ဝန်ထမ်းရှင်း ကုန်ဖိုး
+        function calculateRiderHandoverToOffice(order) {
+            const collected = calculateCollectedItemPrice(order);
+            const staffPrePay = calculateStaffPrePayItem(order);
+            return Math.max(0, collected - staffPrePay);
         }
 
         // ဝယ်သူပေးချေမှု (Payment Method) Badge
@@ -960,7 +989,7 @@
             }
 
             filteredOrders.forEach(o => {
-                const shopPay = calculateShopPay(o);
+                const collectedItem = calculateCollectedItemPrice(o);
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-indigo-50/50 transition";
                 tr.innerHTML = `
@@ -979,7 +1008,7 @@
                     </td>
                     <td class="p-3">
                         <p>ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
-                        <p class="text-amber-800 font-bold">🏠 ဆိုင်ရှင်းငွေ: ${shopPay.toLocaleString()} MMK</p>
+                        <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
                     </td>
                     <td class="p-3 text-[11px]">
                         <p class="font-semibold text-emerald-800"><b>Collection:</b> ${o.paymentType}</p>
@@ -1008,7 +1037,7 @@
             if (globalTbody) {
                 globalTbody.innerHTML = '';
                 ordersData.forEach(o => {
-                    const shopPayAmount = calculateShopPay(o);
+                    const collectedItem = calculateCollectedItemPrice(o);
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-gray-50 transition";
                     tr.innerHTML = `
@@ -1023,7 +1052,7 @@
                         <td class="p-3.5">
                             <p class="font-bold">${o.item}</p>
                             <p class="text-gray-700">ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
-                            <p class="text-amber-800 font-bold">🏠 ဆိုင်ရှင်းငွေ: ${shopPayAmount.toLocaleString()} MMK</p>
+                            <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
                         </td>
                         <td class="p-3.5">
                             <div>${getPaymentBadge(o.payment)}</div>
@@ -1046,7 +1075,10 @@
                     const completed = ordersData.filter(o => o.rider === rName && o.status === 'ပို့ဆောင်ပြီး');
                     const count = completed.length;
                     
-                    const shopPay = completed.reduce((sum, o) => sum + calculateShopPay(o), 0);
+                    const collectedItemTotal = completed.reduce((sum, o) => sum + calculateCollectedItemPrice(o), 0);
+                    const staffPrePayTotal = completed.reduce((sum, o) => sum + calculateStaffPrePayItem(o), 0);
+                    const officePrePayTotal = completed.reduce((sum, o) => sum + calculateOfficePrePayItem(o), 0);
+                    const handoverTotal = completed.reduce((sum, o) => sum + calculateRiderHandoverToOffice(o), 0);
                     const feePay = completed.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
 
                     const tr = document.createElement('tr');
@@ -1054,7 +1086,10 @@
                     tr.innerHTML = `
                         <td class="p-2.5 font-bold text-gray-800">${rName}</td>
                         <td class="p-2.5 text-center"><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full font-bold">${count} စောင်</span></td>
-                        <td class="p-2.5 text-right font-bold text-amber-700">${shopPay.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-amber-700">${collectedItemTotal.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-purple-700">${staffPrePayTotal.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-sky-700">${officePrePayTotal.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-amber-900 bg-amber-50">${handoverTotal.toLocaleString()} MMK</td>
                         <td class="p-2.5 text-right font-bold text-emerald-700">${feePay.toLocaleString()} MMK</td>
                     `;
                     summaryTbody.appendChild(tr);
@@ -1108,17 +1143,23 @@
                     const completedMyOrders = myOrders.filter(o => o.status === 'ပို့ဆောင်ပြီး');
                     document.getElementById('riderPersonalCount').innerText = `${completedMyOrders.length} စောင်`;
                     
-                    const totalShop = completedMyOrders.reduce((sum, o) => sum + calculateShopPay(o), 0);
-                    document.getElementById('riderPersonalShopPay').innerText = `${totalShop.toLocaleString()} MMK`;
-                    
-                    const totalFee = completedMyOrders.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
-                    document.getElementById('riderPersonalFees').innerText = `${totalFee.toLocaleString()} MMK`;
+                    const totalCollectedItem = completedMyOrders.reduce((sum, o) => sum + calculateCollectedItemPrice(o), 0);
+                    document.getElementById('riderPersonalCollectedItem').innerText = `${totalCollectedItem.toLocaleString()} MMK`;
+
+                    const totalStaffPrePay = completedMyOrders.reduce((sum, o) => sum + calculateStaffPrePayItem(o), 0);
+                    document.getElementById('riderPersonalStaffPrePay').innerText = `${totalStaffPrePay.toLocaleString()} MMK`;
+
+                    const totalOfficePrePay = completedMyOrders.reduce((sum, o) => sum + calculateOfficePrePayItem(o), 0);
+                    document.getElementById('riderPersonalOfficePrePay').innerText = `${totalOfficePrePay.toLocaleString()} MMK`;
+
+                    const totalHandover = completedMyOrders.reduce((sum, o) => sum + calculateRiderHandoverToOffice(o), 0);
+                    document.getElementById('riderPersonalHandover').innerText = `${totalHandover.toLocaleString()} MMK`;
 
                     if (myOrders.length === 0) {
                         riderTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">သင်လက်ခံထားသော အော်ဒါ မရှိသေးပါ။ အထက်ပါ ဇယားမှ အော်ဒါများကို ဝင်ရောက်လက်ခံနိုင်ပါသည်။</td></tr>`;
                     } else {
                         myOrders.forEach(o => {
-                            const shopPayAmount = calculateShopPay(o);
+                            const collectedItem = calculateCollectedItemPrice(o);
                             
                             const callBtn = o.receiverPhone ? `
                                 <a href="tel:${o.receiverPhone}" class="inline-flex items-center gap-1 bg-emerald-600 text-white px-2 py-1 rounded font-bold text-[11px] shadow hover:bg-emerald-700">
@@ -1158,7 +1199,7 @@
                                 </td>
                                 <td class="p-3">
                                     <p>ကုန်ဖိုး: <b>${parseInt(o.itemPrice).toLocaleString()}</b> | ဒလီခ: <b>${parseInt(o.deliveryFee).toLocaleString()}</b></p>
-                                    <p class="text-amber-800 font-bold">🏠 ဆိုင်သို့ရှင်းရန်ငွေ: ${shopPayAmount.toLocaleString()} MMK</p>
+                                    <p class="text-amber-800 font-bold">🏠 ကောက်ခံရရှိကုန်ဖိုး: ${collectedItem.toLocaleString()} MMK</p>
                                     <p class="text-[10px] text-indigo-900 font-semibold">💳 ${o.paymentType}</p>
                                 </td>
                                 <td class="p-3">
