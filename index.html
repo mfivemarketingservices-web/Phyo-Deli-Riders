@@ -1594,7 +1594,7 @@
             });
         };
 
-        /* REFACTORED STANDALONE PAYROLL RENDER FUNCTION */
+        /* ================= REFACTORED STANDALONE PAYROLL RENDER FUNCTION WITH AUTOMATIC DATE/TIME RESET ================= */
         window.renderRiderPayroll = function() {
             const selectEl = document.getElementById('payrollRiderSelect');
             let targetRider = selectEl ? selectEl.value : window.currentRiderName;
@@ -1602,32 +1602,92 @@
                 targetRider = window.allRidersList[0];
             }
 
+            // ---------- 1. AUTOMATIC DATE/TIME RESET CHECK LOGIC ----------
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const date = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${date}`; // e.g. "2026-07-30"
+
+            const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+            // Helper to get ISO Week key
+            const getWeekKey = (d) => {
+                const tempDate = new Date(d.valueOf());
+                const dayNum = (d.getDay() + 6) % 7;
+                tempDate.setDate(tempDate.getDate() - dayNum + 3);
+                const firstThursday = tempDate.valueOf();
+                tempDate.setMonth(0, 1);
+                if (tempDate.getDay() !== 4) {
+                    tempDate.setMonth(0, 1 + ((4 - tempDate.getDay() + 7) % 7));
+                }
+                return `${d.getFullYear()}-W${1 + Math.ceil((firstThursday - tempDate) / 604800000)}`;
+            };
+            const currentWeekKey = getWeekKey(now);
+            const currentMonthKey = `${year}-${month}`; // e.g. "2026-07"
+
+            // Retrieve last reset timestamps from LocalStorage
+            let lastDailyReset = localStorage.getItem('phyo_payroll_last_daily_reset') || '';
+            let lastWeeklyReset = localStorage.getItem('phyo_payroll_last_weekly_reset') || '';
+            let lastMonthlyReset = localStorage.getItem('phyo_payroll_last_monthly_reset') || '';
+
+            let isDailyResetNeeded = (lastDailyReset !== todayStr);
+            let isWeeklyResetNeeded = (lastWeeklyReset !== currentWeekKey);
+            let isMonthlyResetNeeded = (lastMonthlyReset !== currentMonthKey);
+
+            // Update local reset trackers if reset triggers
+            if (isDailyResetNeeded) {
+                localStorage.setItem('phyo_payroll_last_daily_reset', todayStr);
+            }
+            if (isWeeklyResetNeeded) {
+                localStorage.setItem('phyo_payroll_last_weekly_reset', currentWeekKey);
+            }
+            if (isMonthlyResetNeeded) {
+                localStorage.setItem('phyo_payroll_last_monthly_reset', currentMonthKey);
+            }
+
+            // ---------- 2. STATS & EARNINGS CALCULATION LOGIC ----------
             const shift = window.getRiderShift(targetRider);
-            const todayHours = Math.max(1, Math.round(shift.totalSeconds / 3600)); 
-            const completedToday = window.ordersData.filter(o => o.rider === targetRider && o.status === 'ပို့ဆောင်ပြီး');
-            const todayTrips = completedToday.length;
 
-            const monthHours = todayHours + 150; 
-            const monthTrips = todayTrips + 80;   
+            // Daily Hours & Trips calculation with Daily Auto-Reset
+            let todayHours = isDailyResetNeeded ? 0 : Math.max(0, Math.round(shift.totalSeconds / 3600)); 
+            
+            // Filter completed orders today
+            const completedToday = isDailyResetNeeded ? [] : window.ordersData.filter(o => {
+                const orderDate = o.createdDate || '';
+                return o.rider === targetRider && o.status === 'ပို့ဆောင်ပြီး' && orderDate === todayStr;
+            });
+            let todayTrips = completedToday.length;
 
-            const basicPayToday = Math.round(todayHours * 1100);
-            const basicPayMonth = Math.round(monthHours * 1100);
+            // Monthly Hours & Trips calculation with Monthly Auto-Reset
+            let monthHours = isMonthlyResetNeeded ? todayHours : (todayHours + 150); 
+            let monthTrips = isMonthlyResetNeeded ? todayTrips : (todayTrips + 80);   
 
-            const bikeToday = Math.round(todayHours * 250);
-            const bikeMonth = Math.round(monthHours * 250);
+            // 1. Basic Pay (1 hr = 1100 MMK)
+            const basicPayToday = isDailyResetNeeded ? 0 : Math.round(todayHours * 1100);
+            const basicPayMonth = isMonthlyResetNeeded ? 0 : Math.round(monthHours * 1100);
 
-            const phoneToday = Math.round(todayHours * 85);
-            const phoneMonth = Math.round(monthHours * 85);
+            // 2. Bike Maintenance (1 hr = 250 MMK)
+            const bikeToday = isDailyResetNeeded ? 0 : Math.round(todayHours * 250);
+            const bikeMonth = isMonthlyResetNeeded ? 0 : Math.round(monthHours * 250);
 
-            const attendanceToday = Math.round(todayHours * 85);
-            const attendanceMonth = Math.round(monthHours >= 100 ? monthHours * 85 : 0);
+            // 3. Phone Bill (1 hr = 85 MMK)
+            const phoneToday = isDailyResetNeeded ? 0 : Math.round(todayHours * 85);
+            const phoneMonth = isMonthlyResetNeeded ? 0 : Math.round(monthHours * 85);
 
-            const fuelHrToday = Math.round(todayHours * 666);
-            const fuelHrMonth = Math.round(monthHours * 666);
+            // 4. Attendance Bonus (1 hr = 85 MMK)
+            const attendanceToday = isDailyResetNeeded ? 0 : Math.round(todayHours * 85);
+            const attendanceMonth = isMonthlyResetNeeded ? 0 : Math.round(monthHours >= 100 ? monthHours * 85 : 0);
 
-            const fuelTripToday = Math.round(todayTrips * 300);
-            const fuelTripMonth = Math.round(monthTrips * 300);
+            // 5. Fuel Hourly Allowance (Weekly Reset: Sun midnight)
+            const fuelHrToday = (isDailyResetNeeded || isWeeklyResetNeeded) ? 0 : Math.round(todayHours * 666);
+            const fuelHrMonth = isWeeklyResetNeeded ? 0 : Math.round(monthHours * 666);
 
+            // 6. Fuel Per Trip Allowance (Weekly Reset: Sun midnight)
+            const fuelTripToday = (isDailyResetNeeded || isWeeklyResetNeeded) ? 0 : Math.round(todayTrips * 300);
+            const fuelTripMonth = isWeeklyResetNeeded ? 0 : Math.round(monthTrips * 300);
+
+            // 7. Delivery Commission
             let commissionPercent = 0.5;
             const avgTripsPerHr = todayHours > 0 ? todayTrips / todayHours : 0;
             if (avgTripsPerHr >= 3) commissionPercent = 1.0;
@@ -1635,28 +1695,33 @@
             else commissionPercent = 0.5;
 
             let commTodayTotal = 0;
-            completedToday.forEach(o => {
-                let baseComm = 200; 
-                if (o.speed === 'အမြန်ပို့') baseComm = 250;
-                if (o.speed === 'အနှေးပို့') baseComm = 150;
-                commTodayTotal += Math.round(baseComm * commissionPercent);
-            });
-            const commMonthTotal = Math.round(commTodayTotal + (monthTrips - todayTrips) * 200 * 0.75);
+            if (!isDailyResetNeeded) {
+                completedToday.forEach(o => {
+                    let baseComm = 200; 
+                    if (o.speed === 'အမြန်ပို့') baseComm = 250;
+                    if (o.speed === 'အနှေးပို့') baseComm = 150;
+                    commTodayTotal += Math.round(baseComm * commissionPercent);
+                });
+            }
+            const commMonthTotal = isMonthlyResetNeeded ? 0 : Math.round(commTodayTotal + (monthTrips - todayTrips) * 200 * 0.75);
 
+            // 8. Target & Special Bonuses
             let bonusToday = 0;
-            if (avgTripsPerHr >= 3) {
+            if (!isDailyResetNeeded && avgTripsPerHr >= 3) {
                 bonusToday += Math.round(todayTrips * 150); 
             }
-            let bonusMonth = bonusToday;
-            if (monthTrips > 78) {
+            let bonusMonth = isMonthlyResetNeeded ? 0 : bonusToday;
+            if (!isMonthlyResetNeeded && monthTrips > 78) {
                 bonusMonth += Math.round((monthTrips - 78) * 150); 
             }
 
+            // Helper function to safely write text to elements
             const setTxt = (id, val) => {
                 const el = document.getElementById(id);
                 if (el) el.innerText = val;
             };
 
+            // Update UI Displays
             setTxt('payrollTodayHours', `${todayHours} နာရီ`);
             setTxt('payrollTodayTrips', `${todayTrips} ကြောင်း`);
             setTxt('payrollMonthHours', `${monthHours} နာရီ`);
@@ -1928,148 +1993,111 @@
                         <div class="text-[11px] font-semibold text-gray-700">🚚 Deliv: ${order.deliveryDateTime || '-'}</div>
                         ${alertInfo.badgeHTML}
                     </td>
-                    <td class="p-3.5">
-                        <div class="font-bold text-gray-800">${order.item}</div>
-                        <div class="text-xs font-bold text-emerald-700">ကုန်ဖိုး: ${parseInt(order.itemPrice).toLocaleString()} MMK</div>
-                        <div class="text-xs font-bold text-indigo-700">ဒလီခ: ${parseInt(order.deliveryFee).toLocaleString()} MMK</div>
+                    <td class="p-3.5 font-bold">
+                        <div>ပစ္စည်း: ${order.item}</div>
+                        <div class="text-emerald-700">ကုန်ဖိုး: ${parseInt(order.itemPrice || 0).toLocaleString()} MMK</div>
+                        <div class="text-indigo-700">ဒလီခ: ${parseInt(order.deliveryFee || 0).toLocaleString()} MMK</div>
                     </td>
-                    <td class="p-3.5">
-                        ${window.getPaymentBadge(order.payment)}
-                    </td>
-                    <td class="p-3.5">
-                        ${window.getShopPrePayBadge(order.shopPrePayer, order.payerType)}
-                    </td>
+                    <td class="p-3.5">${window.getPaymentBadge(order.payment)}</td>
+                    <td class="p-3.5">${window.getShopPrePayBadge(order.shopPrePayer, order.payerType)}</td>
                     <td class="p-3.5 text-center">
-                        <span class="bg-gray-100 text-gray-800 font-bold px-2 py-1 rounded border text-xs inline-block">${order.status}</span>
+                        <span class="bg-indigo-100 text-indigo-900 border border-indigo-300 font-bold px-2 py-1 rounded text-[11px]">${order.status || 'အပ်နှံ'}</span>
                     </td>
                     <td class="p-3.5">
-                        <div class="font-bold text-indigo-900">${order.rider}</div>
-                        <div class="mt-1">${window.getPriorityBadge(order.priority)}</div>
+                        <div class="font-bold text-gray-800">${order.rider || 'Unassigned'}</div>
+                        <div>${window.getPriorityBadge(order.priority)}</div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         };
 
-        window.renderRiderSummaryChartTable = function() {
+        window.renderRiderSummaryTable = function() {
             const tbody = document.getElementById('riderSummaryChartTable');
             if (!tbody) return;
             tbody.innerHTML = '';
 
             window.allRidersList.forEach(riderName => {
-                const myOrders = window.ordersData.filter(o => o.rider === riderName && o.status === 'ပို့ဆောင်ပြီး');
-                
-                let totalCount = myOrders.length;
-                let totalCollectedItem = 0;
-                let totalStaffPrePay = 0;
-                let totalOfficePrePay = 0;
-                let totalItemHandover = 0;
-                let totalCollectedFee = 0;
-                let totalFeeHandover = 0;
+                const riderOrders = window.ordersData.filter(o => o.rider === riderName && o.status === 'ပို့ဆောင်ပြီး');
+                const completedCount = riderOrders.length;
 
-                myOrders.forEach(o => {
-                    totalCollectedItem += window.calculateCollectedItemPrice(o);
-                    totalStaffPrePay += window.calculateStaffPrePayItem(o);
-                    totalOfficePrePay += window.calculateOfficePrePayItem(o);
-                    totalItemHandover += window.calculateRiderHandoverToOffice(o);
-                    totalCollectedFee += window.calculateCollectedDeliveryFee(o);
-                    totalFeeHandover += window.calculateRiderFeeHandoverToOffice(o);
-                });
+                const collectedItem = riderOrders.reduce((s, o) => s + window.calculateCollectedItemPrice(o), 0);
+                const staffPrePay = riderOrders.reduce((s, o) => s + window.calculateStaffPrePayItem(o), 0);
+                const officePrePay = riderOrders.reduce((s, o) => s + window.calculateOfficePrePayItem(o), 0);
+                const handover = riderOrders.reduce((s, o) => s + window.calculateRiderHandoverToOffice(o), 0);
+                const collectedFee = riderOrders.reduce((s, o) => s + window.calculateCollectedDeliveryFee(o), 0);
+                const feeHandover = riderOrders.reduce((s, o) => s + window.calculateRiderFeeHandoverToOffice(o), 0);
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-amber-50/50 transition border-b text-xs";
+                tr.className = "hover:bg-indigo-50/40 border-b";
+
                 tr.innerHTML = `
-                    <td class="p-2.5 font-bold text-gray-900">${riderName}</td>
-                    <td class="p-2.5 text-center font-bold text-indigo-800">${totalCount} စောင်</td>
-                    <td class="p-2.5 text-right font-bold text-emerald-800">${totalCollectedItem.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-purple-800">${totalStaffPrePay.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-sky-800">${totalOfficePrePay.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-amber-900 bg-amber-50">${totalItemHandover.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-indigo-800">${totalCollectedFee.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-emerald-900 bg-emerald-50">${totalFeeHandover.toLocaleString()} MMK</td>
+                    <td class="p-2.5 font-bold text-gray-800">${riderName}</td>
+                    <td class="p-2.5 text-center font-bold text-indigo-900">${completedCount} စောင်</td>
+                    <td class="p-2.5 text-right font-bold text-gray-700">${collectedItem.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right text-purple-700">${staffPrePay.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right text-sky-700">${officePrePay.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right font-bold bg-amber-50 text-amber-900">${handover.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right text-gray-700">${collectedFee.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right font-bold bg-emerald-50 text-emerald-900">${feeHandover.toLocaleString()} MMK</td>
                 `;
                 tbody.appendChild(tr);
             });
         };
 
-        /* 🏪 Shop Summary Table Logic */
-        window.renderShopSummaryChartTable = function() {
+        window.renderShopSummaryTable = function() {
             const tbody = document.getElementById('shopSummaryChartTable');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            const shopSummaryMap = {};
-
-            window.ordersData.forEach(order => {
-                if (order.status === "အော်ဒါပယ်ဖျက်") return;
-
-                const shopName = order.sender || "အထွေထွေ ပေးပို့သူ";
-                const itemPrice = parseInt(order.itemPrice) || 0;
-                const deliveryFee = parseInt(order.deliveryFee) || 0;
-                const pendingShopPay = window.calculatePendingShopPay(order);
-
-                if (!shopSummaryMap[shopName]) {
-                    shopSummaryMap[shopName] = {
-                        count: 0,
-                        totalItemPrice: 0,
-                        totalPendingShopPay: 0,
-                        totalDeliveryFee: 0
-                    };
+            const shops = {};
+            window.ordersData.forEach(o => {
+                if (o.status !== 'အော်ဒါပယ်ဖျက်') {
+                    const shopName = o.sender || 'အထွေထွေ ပေးပို့သူ';
+                    if (!shops[shopName]) {
+                        shops[shopName] = { count: 0, totalPrice: 0, pendingPay: 0, totalFee: 0 };
+                    }
+                    shops[shopName].count += 1;
+                    shops[shopName].totalPrice += parseInt(o.itemPrice || 0);
+                    shops[shopName].pendingPay += window.calculatePendingShopPay(o);
+                    shops[shopName].totalFee += parseInt(o.deliveryFee || 0);
                 }
-
-                shopSummaryMap[shopName].count += 1;
-                shopSummaryMap[shopName].totalItemPrice += itemPrice;
-                shopSummaryMap[shopName].totalPendingShopPay += pendingShopPay;
-                shopSummaryMap[shopName].totalDeliveryFee += deliveryFee;
             });
 
-            const shops = Object.keys(shopSummaryMap);
-
-            if (shops.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-gray-400 italic">ဆိုင်များ၏ စာရင်းမရှိသေးပါ။</td></tr>`;
-                return;
-            }
-
-            shops.forEach(shopName => {
-                const data = shopSummaryMap[shopName];
+            Object.keys(shops).forEach(shopName => {
+                const s = shops[shopName];
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-purple-50/50 transition border-b text-xs";
+                tr.className = "hover:bg-purple-50/40 border-b";
+
                 tr.innerHTML = `
-                    <td class="p-2.5 font-bold text-purple-950">${shopName}</td>
-                    <td class="p-2.5 text-center font-bold text-indigo-800">${data.count} စောင်</td>
-                    <td class="p-2.5 text-right font-bold text-emerald-800">${data.totalItemPrice.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-rose-900 bg-rose-50">${data.totalPendingShopPay.toLocaleString()} MMK</td>
-                    <td class="p-2.5 text-right font-bold text-purple-800">${data.totalDeliveryFee.toLocaleString()} MMK</td>
+                    <td class="p-2.5 font-bold text-purple-900">${shopName}</td>
+                    <td class="p-2.5 text-center font-bold text-gray-800">${s.count} စောင်</td>
+                    <td class="p-2.5 text-right text-gray-700">${s.totalPrice.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right font-bold bg-rose-50 text-rose-900">${s.pendingPay.toLocaleString()} MMK</td>
+                    <td class="p-2.5 text-right text-indigo-700">${s.totalFee.toLocaleString()} MMK</td>
                 `;
                 tbody.appendChild(tr);
             });
         };
 
-        /* Admin Filter Table Logic */
         window.renderAdminTable = function() {
             const tbody = document.getElementById('adminOrderTableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            const query = (document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+            const searchKey = (document.getElementById('adminSearchInput')?.value || '').toLowerCase();
 
-            const filteredOrders = window.ordersData.filter(o => {
-                if (!query) return true;
-                return (o.code && o.code.toLowerCase().includes(query)) ||
-                       (o.createdDate && o.createdDate.toLowerCase().includes(query)) ||
-                       (o.rider && o.rider.toLowerCase().includes(query)) ||
-                       (o.sender && o.sender.toLowerCase().includes(query)) ||
-                       (o.receiver && o.receiver.toLowerCase().includes(query));
-            });
+            const filtered = window.ordersData.filter(o => 
+                (o.code || '').toLowerCase().includes(searchKey) ||
+                (o.sender || '').toLowerCase().includes(searchKey) ||
+                (o.receiver || '').toLowerCase().includes(searchKey) ||
+                (o.rider || '').toLowerCase().includes(searchKey) ||
+                (o.createdDate || '').toLowerCase().includes(searchKey)
+            );
 
-            if (filteredOrders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="p-3 text-center text-gray-400 italic">ရှာဖွေမှုနှင့် ကိုက်ညီသော အော်ဒါမရှိပါ။</td></tr>`;
-                return;
-            }
-
-            filteredOrders.forEach(order => {
+            filtered.forEach(order => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-indigo-50/50 transition border-b";
+                tr.className = "hover:bg-gray-50 border-b font-semibold";
 
                 const alertInfo = window.checkTimeAlert(order);
 
@@ -2079,39 +2107,38 @@
                         <div class="text-[11px] text-gray-500">${order.createdDate || '-'}</div>
                     </td>
                     <td class="p-3">
-                        <div class="font-bold text-indigo-800 text-[11px]">${order.category || '-'}</div>
-                        <div class="text-indigo-600 text-[10px] font-semibold">${order.speed || '-'}</div>
-                        <div class="text-amber-800 text-[10px] font-bold">${order.weightAndDistance || 'ပုံမှန်'}</div>
+                        <div class="text-indigo-800 font-bold">${order.category || '-'}</div>
+                        <div class="text-indigo-600 text-[11px]">${order.speed || '-'}</div>
+                        <div class="text-amber-800 text-[11px]">${order.weightAndDistance || '-'}</div>
                     </td>
                     <td class="p-3">
                         <div class="font-bold text-gray-800">${order.sender}</div>
-                        <div class="text-gray-500">➡️ ${order.receiver}</div>
+                        <div class="text-gray-500">➡️ ${order.receiver} (${order.receiverPhone || '-'})</div>
                     </td>
                     <td class="p-3">
-                        <div class="text-[11px] font-semibold text-gray-700">📦 Pick: ${order.pickupDateTime || '-'}</div>
-                        <div class="text-[11px] font-semibold text-gray-700">🚚 Deliv: ${order.deliveryDateTime || '-'}</div>
+                        <div class="text-[11px] text-gray-600">P: ${order.pickupDateTime || '-'}</div>
+                        <div class="text-[11px] text-gray-600">D: ${order.deliveryDateTime || '-'}</div>
                         ${alertInfo.badgeHTML}
                     </td>
                     <td class="p-3">
-                        <div class="font-bold text-emerald-700">ကုန်ဖိုး: ${parseInt(order.itemPrice).toLocaleString()} MMK</div>
-                        <div class="font-bold text-indigo-700">ဒလီခ: ${parseInt(order.deliveryFee).toLocaleString()} MMK</div>
-                        <div class="text-[11px] text-gray-600">ကောက်ရရှိ: ${window.calculateCollectedItemPrice(order).toLocaleString()} MMK</div>
+                        <div>ကုန်: ${parseInt(order.itemPrice || 0).toLocaleString()} MMK</div>
+                        <div class="text-indigo-700">ဒလီ: ${parseInt(order.deliveryFee || 0).toLocaleString()} MMK</div>
                     </td>
                     <td class="p-3">${window.getPaymentBadge(order.payment)}</td>
                     <td class="p-3">${window.getShopPrePayBadge(order.shopPrePayer, order.payerType)}</td>
                     <td class="p-3 text-center">
-                        <span class="bg-gray-100 text-gray-800 font-bold px-2 py-1 rounded border text-xs inline-block">${order.status}</span>
+                        <span class="bg-indigo-100 text-indigo-900 font-bold px-2 py-0.5 rounded text-[11px]">${order.status || 'အပ်နှံ'}</span>
                     </td>
                     <td class="p-3">
-                        <div class="font-bold text-indigo-900">${order.rider}</div>
-                        <div class="mt-1">${window.getPriorityBadge(order.priority)}</div>
+                        <div class="font-bold text-gray-800">${order.rider || 'Unassigned'}</div>
+                        <div>${window.getPriorityBadge(order.priority)}</div>
                     </td>
                     <td class="p-3 text-center">
-                        <div class="flex items-center justify-center gap-1">
-                            <button onclick="editOrderAdmin('${order.code}')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 p-1.5 rounded shadow" title="Edit">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="editOrderAdmin('${order.code}')" class="bg-amber-500 text-gray-900 p-1.5 rounded hover:bg-amber-600" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button onclick="deleteOrderAdmin('${order.code}')" class="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded shadow" title="Delete">
+                            <button onclick="deleteOrderAdmin('${order.code}')" class="bg-rose-600 text-white p-1.5 rounded hover:bg-rose-700" title="Delete">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -2122,127 +2149,18 @@
         };
 
         window.renderRiderPersonalDashboard = function() {
-            const availBody = document.getElementById('availableOrdersTableBody');
-            const myBody = document.getElementById('riderPersonalTableBody');
+            if (!window.currentRiderName) return;
 
-            if (availBody) availBody.innerHTML = '';
-            if (myBody) myBody.innerHTML = '';
-
-            const availableOrders = window.ordersData.filter(o => o.rider === 'Unassigned' && o.status !== 'အော်ဒါပယ်ဖျက်');
             const myOrders = window.ordersData.filter(o => o.rider === window.currentRiderName);
+            const completed = myOrders.filter(o => o.status === 'ပို့ဆောင်ပြီး');
 
-            if (availBody) {
-                if (availableOrders.length === 0) {
-                    availBody.innerHTML = `<tr><td colspan="8" class="p-3 text-center text-gray-400 italic">လက်ရှိ အပ်နှံထားသော အော်ဒါအသစ်များ မရှိသေးပါ</td></tr>`;
-                } else {
-                    availableOrders.forEach(o => {
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-amber-100/50 border-b";
-
-                        const alertInfo = window.checkTimeAlert(o);
-
-                        tr.innerHTML = `
-                            <td class="p-2.5 font-bold text-indigo-900">${o.code}</td>
-                            <td class="p-2.5">
-                                <div class="font-bold text-gray-800">${o.sender}</div>
-                                <div class="text-gray-500">➡️ ${o.receiver}</div>
-                            </td>
-                            <td class="p-2.5">
-                                <div class="text-[10px] text-gray-700">📦 ${o.pickupDateTime || '-'}</div>
-                                <div class="text-[10px] text-gray-700">🚚 ${o.deliveryDateTime || '-'}</div>
-                                ${alertInfo.badgeHTML}
-                            </td>
-                            <td class="p-2.5">
-                                <div class="font-bold text-emerald-800">${parseInt(o.itemPrice).toLocaleString()} MMK</div>
-                                <div class="text-[10px] font-bold text-indigo-700">ဒလီခ: ${parseInt(o.deliveryFee).toLocaleString()} MMK</div>
-                            </td>
-                            <td class="p-2.5">${window.getPaymentBadge(o.payment)}</td>
-                            <td class="p-2.5">${window.getShopPrePayBadge(o.shopPrePayer, o.payerType)}</td>
-                            <td class="p-2.5 text-center">${window.getPriorityBadge(o.priority)}</td>
-                            <td class="p-2.5 text-center">
-                                <button onclick="selfAssignOrder('${o.code}')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold px-3 py-1.5 rounded-lg text-xs shadow">
-                                    <i class="fa-solid fa-hand-holding-hand"></i> လက်ခံမည်
-                                </button>
-                            </td>
-                        `;
-                        availBody.appendChild(tr);
-                    });
-                }
-            }
-
-            if (myBody) {
-                if (myOrders.length === 0) {
-                    myBody.innerHTML = `<tr><td colspan="8" class="p-3 text-center text-gray-400 italic">မိမိ လက်ခံထားသော အော်ဒါများ မရှိသေးပါ</td></tr>`;
-                } else {
-                    myOrders.forEach(o => {
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-indigo-50/50 border-b";
-
-                        const alertInfo = window.checkTimeAlert(o);
-
-                        tr.innerHTML = `
-                            <td class="p-3">
-                                <span class="font-bold text-indigo-900">${o.code}</span>
-                                <div class="mt-1">${window.getPriorityBadge(o.priority)}</div>
-                            </td>
-                            <td class="p-3">
-                                <div class="font-bold text-gray-800">${o.sender}</div>
-                                <div class="text-gray-600">➡️ ${o.receiver} (${o.receiverPhone || '-'})</div>
-                                <div class="text-gray-500 text-[10px]">${o.receiverAddress || '-'}</div>
-                            </td>
-                            <td class="p-3">
-                                <div class="text-[10px] text-gray-700">📦 ${o.pickupDateTime || '-'}</div>
-                                <div class="text-[10px] text-gray-700">🚚 ${o.deliveryDateTime || '-'}</div>
-                                ${alertInfo.badgeHTML}
-                            </td>
-                            <td class="p-3">
-                                <div class="font-bold text-gray-800">${o.item}</div>
-                                <div class="font-bold text-emerald-700">ကုန်ဖိုး: ${parseInt(o.itemPrice).toLocaleString()} MMK</div>
-                                <div class="font-bold text-indigo-700">ဒလီခ: ${parseInt(o.deliveryFee).toLocaleString()} MMK</div>
-                            </td>
-                            <td class="p-3">${window.getPaymentBadge(o.payment)}</td>
-                            <td class="p-3">${window.getShopPrePayBadge(o.shopPrePayer, o.payerType)}</td>
-                            <td class="p-3 text-center">
-                                <select onchange="updateRiderOrderStatus('${o.code}', this.value)" class="p-1 border rounded text-xs font-bold bg-white text-indigo-900 shadow-sm">
-                                    <option value="လက်ခံ" ${o.status === 'လက်ခံ' ? 'selected' : ''}>လက်ခံ</option>
-                                    <option value="ကောက်ယူ" ${o.status === 'ကောက်ယူ' ? 'selected' : ''}>ကောက်ယူ</option>
-                                    <option value="စတင်ပို့ဆောင်" ${o.status === 'စတင်ပို့ဆောင်' ? 'selected' : ''}>စတင်ပို့ဆောင်</option>
-                                    <option value="ပို့ဆောင်ပြီး" ${o.status === 'ပို့ဆောင်ပြီး' ? 'selected' : ''}>ပို့ဆောင်ပြီး</option>
-                                    <option value="ပို့ရန်ကျန်" ${o.status === 'ပို့ရန်ကျန်' ? 'selected' : ''}>ပို့ရန်ကျန်</option>
-                                </select>
-                            </td>
-                            <td class="p-3 text-center">
-                                <button onclick="openRiderEditModal('${o.code}')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold px-2 py-1 rounded text-xs shadow" title="Edit">
-                                    <i class="fa-solid fa-pen-to-square"></i> Edit
-                                </button>
-                            </td>
-                        `;
-                        myBody.appendChild(tr);
-                    });
-                }
-            }
-
-            const completedMine = myOrders.filter(o => o.status === 'ပို့ဆောင်ပြီး');
-            
-            let count = completedMine.length;
-            let collectedItem = 0;
-            let staffPrePay = 0;
-            let officePrePay = 0;
-            let itemHandover = 0;
-            let feeHandover = 0;
-            let pendingShopPay = 0;
-
-            completedMine.forEach(o => {
-                collectedItem += window.calculateCollectedItemPrice(o);
-                staffPrePay += window.calculateStaffPrePayItem(o);
-                officePrePay += window.calculateOfficePrePayItem(o);
-                itemHandover += window.calculateRiderHandoverToOffice(o);
-                feeHandover += window.calculateRiderFeeHandoverToOffice(o);
-            });
-
-            myOrders.forEach(o => {
-                pendingShopPay += window.calculatePendingShopPay(o);
-            });
+            const count = completed.length;
+            const collectedItem = completed.reduce((s, o) => s + window.calculateCollectedItemPrice(o), 0);
+            const staffPrePay = completed.reduce((s, o) => s + window.calculateStaffPrePayItem(o), 0);
+            const officePrePay = completed.reduce((s, o) => s + window.calculateOfficePrePayItem(o), 0);
+            const handover = completed.reduce((s, o) => s + window.calculateRiderHandoverToOffice(o), 0);
+            const feeHandover = completed.reduce((s, o) => s + window.calculateRiderFeeHandoverToOffice(o), 0);
+            const pendingShopPay = myOrders.reduce((s, o) => s + window.calculatePendingShopPay(o), 0);
 
             const setTxt = (id, val) => {
                 const el = document.getElementById(id);
@@ -2253,54 +2171,148 @@
             setTxt('riderPersonalCollectedItem', `${collectedItem.toLocaleString()} MMK`);
             setTxt('riderPersonalStaffPrePay', `${staffPrePay.toLocaleString()} MMK`);
             setTxt('riderPersonalOfficePrePay', `${officePrePay.toLocaleString()} MMK`);
-            setTxt('riderPersonalHandover', `${itemHandover.toLocaleString()} MMK`);
+            setTxt('riderPersonalHandover', `${handover.toLocaleString()} MMK`);
             setTxt('riderPersonalFeeHandover', `${feeHandover.toLocaleString()} MMK`);
             setTxt('riderPersonalPendingShopPay', `${pendingShopPay.toLocaleString()} MMK`);
 
             const shift = window.getRiderShift(window.currentRiderName);
-            const statusTextEl = document.getElementById('riderShiftStatusText');
+            const shiftStatusTxt = document.getElementById('riderShiftStatusText');
             const clockInBtn = document.getElementById('clockInBtn');
             const clockOutBtn = document.getElementById('clockOutBtn');
 
             if (shift.isOnDuty) {
-                if (statusTextEl) statusTextEl.innerText = 'Status: On-Duty (ရုံးတက်နေသည်)';
+                if (shiftStatusTxt) shiftStatusTxt.innerHTML = `<span class="text-emerald-300 font-bold">🟢 On-Duty (ရုံးတက်နေပါသည်)</span>`;
                 if (clockInBtn) clockInBtn.classList.add('hidden');
                 if (clockOutBtn) clockOutBtn.classList.remove('hidden');
             } else {
-                if (statusTextEl) statusTextEl.innerText = 'Status: Off-Duty (ရုံးမတက်ရသေးပါ)';
+                if (shiftStatusTxt) shiftStatusTxt.innerHTML = `<span class="text-rose-300 font-bold">🔴 Off-Duty (ရုံးမတက်ရသေးပါ)</span>`;
                 if (clockInBtn) clockInBtn.classList.remove('hidden');
                 if (clockOutBtn) clockOutBtn.classList.add('hidden');
             }
+
+            // Render My Accepted Orders Table
+            const tbody = document.getElementById('riderPersonalTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            myOrders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 border-b font-semibold";
+
+                const alertInfo = window.checkTimeAlert(order);
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <span class="font-bold text-indigo-900">${order.code}</span>
+                        <div>${window.getPriorityBadge(order.priority)}</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-bold text-gray-800">${order.sender}</div>
+                        <div class="text-gray-600">➡️ ${order.receiver} (${order.receiverPhone || '-'})</div>
+                        <div class="text-[11px] text-gray-500">${order.receiverAddress || '-'}</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="text-[11px] text-gray-600">P: ${order.pickupDateTime || '-'}</div>
+                        <div class="text-[11px] text-gray-600">D: ${order.deliveryDateTime || '-'}</div>
+                        ${alertInfo.badgeHTML}
+                    </td>
+                    <td class="p-3">
+                        <div>ကုန်: ${parseInt(order.itemPrice || 0).toLocaleString()} MMK</div>
+                        <div class="text-indigo-700">ဒလီ: ${parseInt(order.deliveryFee || 0).toLocaleString()} MMK</div>
+                    </td>
+                    <td class="p-3">${window.getPaymentBadge(order.payment)}</td>
+                    <td class="p-3">${window.getShopPrePayBadge(order.shopPrePayer, order.payerType)}</td>
+                    <td class="p-3 text-center">
+                        <select onchange="updateRiderOrderStatus('${order.code}', this.value)" class="p-1 border rounded text-xs font-bold bg-white text-indigo-900">
+                            <option value="လက်ခံ" ${order.status === 'လက်ခံ' ? 'selected' : ''}>လက်ခံ</option>
+                            <option value="ကောက်ယူ" ${order.status === 'ကောက်ယူ' ? 'selected' : ''}>ကောက်ယူ</option>
+                            <option value="စတင်ပို့ဆောင်" ${order.status === 'စတင်ပို့ဆောင်' ? 'selected' : ''}>စတင်ပို့ဆောင်</option>
+                            <option value="ပို့ဆောင်ပြီး" ${order.status === 'ပို့ဆောင်ပြီး' ? 'selected' : ''}>ပို့ဆောင်ပြီး</option>
+                            <option value="ပို့ရန်ကျန်" ${order.status === 'ပို့ရန်ကျန်' ? 'selected' : ''}>ပို့ရန်ကျန်</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="openRiderEditModal('${order.code}')" class="bg-amber-500 text-gray-900 px-2 py-1 rounded font-bold text-xs hover:bg-amber-600 shadow">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         };
 
-        window.renderManagementDashboard = function() {
-            const totalEl = document.getElementById('mgmtTotalOrders');
-            const completedEl = document.getElementById('mgmtCompletedOrders');
+        window.renderAvailableOrders = function() {
+            const tbody = document.getElementById('availableOrdersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-            if (totalEl) totalEl.innerText = window.ordersData.length;
-            if (completedEl) completedEl.innerText = window.ordersData.filter(o => o.status === 'ပို့ဆောင်ပြီး').length;
+            const availableOrders = window.ordersData.filter(o => 
+                (o.rider === 'Unassigned' || !o.rider) && 
+                o.status !== 'ပို့ဆောင်ပြီး' && 
+                o.status !== 'အော်ဒါပယ်ဖျက်'
+            );
+
+            if (availableOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-3 text-gray-400 italic">လက်ရှိ အော်ဒါအသစ်များ မရှိသေးပါ</td></tr>`;
+                return;
+            }
+
+            availableOrders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-amber-100/50 transition border-b font-semibold";
+
+                const alertInfo = window.checkTimeAlert(order);
+
+                tr.innerHTML = `
+                    <td class="p-2.5 font-bold text-indigo-900">${order.code}</td>
+                    <td class="p-2.5">
+                        <div class="font-bold text-gray-800">${order.sender}</div>
+                        <div class="text-gray-500">➡️ ${order.receiver}</div>
+                    </td>
+                    <td class="p-2.5">
+                        <div class="text-[11px] text-gray-600">P: ${order.pickupDateTime || '-'}</div>
+                        <div class="text-[11px] text-gray-600">D: ${order.deliveryDateTime || '-'}</div>
+                        ${alertInfo.badgeHTML}
+                    </td>
+                    <td class="p-2.5">
+                        <div>ကုန်: ${parseInt(order.itemPrice || 0).toLocaleString()} MMK</div>
+                        <div class="text-indigo-700">ဒလီ: ${parseInt(order.deliveryFee || 0).toLocaleString()} MMK</div>
+                    </td>
+                    <td class="p-2.5">${window.getPaymentBadge(order.payment)}</td>
+                    <td class="p-2.5">${window.getShopPrePayBadge(order.shopPrePayer, order.payerType)}</td>
+                    <td class="p-2.5 text-center">${window.getPriorityBadge(order.priority)}</td>
+                    <td class="p-2.5 text-center">
+                        <button onclick="selfAssignOrder('${order.code}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 rounded shadow text-xs">
+                            <i class="fa-solid fa-hand-holding"></i> လက်ခံမည်
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         };
 
         window.renderTables = function() {
-            window.renderGlobalChartTable();
-            window.renderRiderSummaryChartTable();
-            window.renderShopSummaryChartTable();
-            window.renderAdminTable();
             window.renderRiderLiveStatusDashboard();
+            window.renderGlobalChartTable();
+            window.renderRiderSummaryTable();
+            window.renderShopSummaryTable();
+            window.renderAdminTable();
+            window.renderRiderPersonalDashboard();
+            window.renderAvailableOrders();
+            window.renderRiderPayroll();
             window.calculateFinancialCashFlow();
 
-            if (window.loggedInRole === 'management') {
-                window.renderManagementDashboard();
-            } else if (window.loggedInRole === 'rider') {
-                window.renderRiderPersonalDashboard();
-            }
-
-            window.renderRiderPayroll();
+            // Management dashboard summary count
+            const mgmtTotal = document.getElementById('mgmtTotalOrders');
+            const mgmtCompleted = document.getElementById('mgmtCompletedOrders');
+            if (mgmtTotal) mgmtTotal.innerText = window.ordersData.length;
+            if (mgmtCompleted) mgmtCompleted.innerText = window.ordersData.filter(o => o.status === 'ပို့ဆောင်ပြီး').length;
         };
 
-        // Initialize UI State
-        window.hideAllSections();
-        document.getElementById('loginSection').classList.remove('hidden');
+        // Initialize App View State
+        window.addEventListener('DOMContentLoaded', () => {
+            window.renderTables();
+        });
 
     </script>
 </body>
