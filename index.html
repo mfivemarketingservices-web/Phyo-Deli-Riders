@@ -115,8 +115,6 @@
 
         <!-- ================= 2. STATUS CHART SECTIONS ================= -->
         <section id="chartSection" class="hidden space-y-8">
-            
-            <!-- SECTION 1: Order Status Chart -->
             <div class="space-y-6">
                 <div class="bg-white p-5 rounded-xl shadow border border-indigo-100 flex justify-between items-center flex-wrap gap-2">
                     <div>
@@ -296,7 +294,6 @@
                     </div>
                 </div>
             </div>
-
         </section>
 
         <!-- ================= 3. MANAGEMENT ================= -->
@@ -1284,7 +1281,7 @@
             }
         };
 
-        // Updated Management/Admin Login Function with Username & Password Logic
+        // Staff Login
         window.loginStaff = function() {
             const usernameInput = document.getElementById('staffUsername').value.trim().toUpperCase();
             const inputPin = document.getElementById('staffPin').value.trim();
@@ -1292,13 +1289,11 @@
             const user = window.officeStaffCredentials[usernameInput];
 
             if (user) {
-                // Check if login matches Management or Admin role PIN
                 if (user.role === 'management' && inputPin === user.pin) {
                     window.loggedInRole = 'management';
                 } else if (user.role === 'admin' && inputPin === user.pin) {
                     window.loggedInRole = 'admin';
                 } else if (user.adminPin && inputPin === user.adminPin) {
-                    // Check if user has dual Admin role (e.g., ANP)
                     window.loggedInRole = 'admin';
                 } else {
                     alert('PIN/Password နံပါတ် မှားယွင်းနေပါသည်!');
@@ -1318,6 +1313,7 @@
             }
         };
 
+        // Rider Login
         window.loginRider = function() {
             const usernameInput = document.getElementById('riderUsername').value.trim().toLowerCase();
             const passwordInput = document.getElementById('riderPassword').value.trim();
@@ -1458,6 +1454,7 @@
             });
         };
 
+        // RIDER CLOCK IN logic
         window.clockInRider = function() {
             const shift = window.getRiderShift(window.currentRiderName);
             shift.isOnDuty = true;
@@ -1465,9 +1462,11 @@
             
             window.syncRiderShift(window.currentRiderName);
             window.startShiftTimer();
+            window.renderTables();
             alert(`${window.currentRiderName} ရုံးတက်ပါပြီ (Clock In Successful)`);
         };
 
+        // RIDER CLOCK OUT logic with Admin Approval Logic
         window.clockOutRider = function() {
             const p1OrdersPending = window.ordersData.filter(o => 
                 o.rider === window.currentRiderName && 
@@ -1507,6 +1506,7 @@
 
             if (window.shiftTimerInterval) clearInterval(window.shiftTimerInterval);
 
+            window.renderTables();
             alert(`${window.currentRiderName} ရုံးဆင်းလိုက်ပါပြီ (Clock Out Successful)`);
         };
 
@@ -1544,6 +1544,7 @@
                         };
                         set(ref(db, 'approvals/' + approvalObj.id), approvalObj);
                     }
+                    window.renderTables();
                 }
             }, 1000);
         };
@@ -1595,7 +1596,9 @@
             }
 
             window.syncRiderShift(req.riderName);
-            set(ref(db, 'approvals/' + reqId + '/status'), 'approved');
+            set(ref(db, 'approvals/' + reqId + '/status'), 'approved').then(() => {
+                window.renderTables();
+            });
         };
 
         window.rejectRiderRequest = function(reqId) {
@@ -1843,6 +1846,44 @@
             window.renderRiderLiveStatusDashboard();
             window.calculateFinancialCashFlow();
 
+            // Toggle Clock-In and Clock-Out Buttons for Logged-In Rider
+            if (window.loggedInRole === 'rider' && window.currentRiderName) {
+                const shift = window.getRiderShift(window.currentRiderName);
+                const clockInBtn = document.getElementById('clockInBtn');
+                const clockOutBtn = document.getElementById('clockOutBtn');
+                const shiftStatusText = document.getElementById('riderShiftStatusText');
+
+                if (shift.isOnDuty) {
+                    if (clockInBtn) clockInBtn.classList.add('hidden');
+                    if (clockOutBtn) clockOutBtn.classList.remove('hidden');
+                    if (shiftStatusText) shiftStatusText.innerText = "Status: On-Duty (ရုံးတက်နေပါသည်)";
+                } else {
+                    if (clockInBtn) clockInBtn.classList.remove('hidden');
+                    if (clockOutBtn) clockOutBtn.classList.add('hidden');
+                    if (shiftStatusText) shiftStatusText.innerText = "Status: Off-Duty (ရုံးမတက်ရသေးပါ)";
+                }
+
+                // Render Rider Personal Summary Numbers
+                const myOrders = window.ordersData.filter(o => o.rider === window.currentRiderName);
+                const myCompleted = myOrders.filter(o => o.status === 'ပို့ဆောင်ပြီး');
+
+                const countEl = document.getElementById('riderPersonalCount');
+                const collectedEl = document.getElementById('riderPersonalCollectedItem');
+                const staffPrePayEl = document.getElementById('riderPersonalStaffPrePay');
+                const officePrePayEl = document.getElementById('riderPersonalOfficePrePay');
+                const handoverEl = document.getElementById('riderPersonalHandover');
+                const feeHandoverEl = document.getElementById('riderPersonalFeeHandover');
+                const pendingShopPayEl = document.getElementById('riderPersonalPendingShopPay');
+
+                if (countEl) countEl.innerText = `${myCompleted.length} စောင်`;
+                if (collectedEl) collectedEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateCollectedItemPrice(o), 0).toLocaleString()} MMK`;
+                if (staffPrePayEl) staffPrePayEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateStaffPrePayItem(o), 0).toLocaleString()} MMK`;
+                if (officePrePayEl) officePrePayEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateOfficePrePayItem(o), 0).toLocaleString()} MMK`;
+                if (handoverEl) handoverEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateRiderHandoverToOffice(o), 0).toLocaleString()} MMK`;
+                if (feeHandoverEl) feeHandoverEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateRiderFeeHandoverToOffice(o), 0).toLocaleString()} MMK`;
+                if (pendingShopPayEl) pendingShopPayEl.innerText = `${myOrders.reduce((sum, o) => sum + window.calculatePendingShopPay(o), 0).toLocaleString()} MMK`;
+            }
+
             const mgmtTotal = document.getElementById('mgmtTotalOrders');
             const mgmtCompleted = document.getElementById('mgmtCompletedOrders');
 
@@ -1957,6 +1998,10 @@
                     `;
                     shopSummaryTbody.appendChild(tr);
                 });
+            }
+
+            if (window.loggedInRole === 'admin') {
+                window.renderAdminTable();
             }
         };
     </script>
