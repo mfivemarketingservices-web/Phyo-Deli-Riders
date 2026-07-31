@@ -182,6 +182,8 @@
                                     <th class="p-2.5 text-right bg-amber-100 text-amber-900">ရုံးသို့ Riders အပ်နှံရန် ကုန်ဖိုးစုစုပေါင်း</th>
                                     <th class="p-2.5 text-right">ကောက်ခံရရှိ ဒလီခ စုစုပေါင်း</th>
                                     <th class="p-2.5 text-right bg-emerald-100 text-emerald-900">ရုံးသို့ Riders အပ်နှံရန် ဒလီခ စုစုပေါင်း</th>
+                                    <th class="p-2.5 text-right bg-indigo-100 text-indigo-900">Rider ရရှိမည့် ကော်မရှင် (%)</th>
+                                    <th class="p-2.5 text-right bg-indigo-200 text-indigo-950">Rider ရရှိမည့် ကော်မရှင် ငွေပမာဏ</th>
                                 </tr>
                             </thead>
                             <tbody id="riderSummaryChartTable" class="divide-y font-semibold"></tbody>
@@ -628,6 +630,10 @@
                 <div class="bg-emerald-100 border border-emerald-300 p-3.5 rounded-xl text-emerald-950 shadow-sm">
                     <p class="text-xs font-bold text-emerald-800"><i class="fa-solid fa-sack-dollar"></i> ရုံးအပ်ရန် ဒလီခ</p>
                     <p id="riderPersonalFeeHandover" class="text-xl font-bold mt-1 text-emerald-900">0 MMK</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl text-indigo-900 shadow-sm">
+                    <p class="text-xs font-bold text-indigo-700"><i class="fa-solid fa-percent"></i> မိမိရရှိမည့် ကော်မရှင်</p>
+                    <p id="riderPersonalCommission" class="text-xl font-bold mt-1 text-indigo-900">0 MMK (0%)</p>
                 </div>
                 <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-rose-900 shadow-sm">
                     <p class="text-xs font-bold text-rose-700"><i class="fa-solid fa-store"></i> ဆိုင်များသို့ ရှင်းရန်ကျန် ကုန်ဖိုး (ဒလီခနှုတ်ပြီး)</p>
@@ -1130,6 +1136,19 @@
             if (payMethod === "Kpay" || payMethod === "Wave") return 0;
 
             return fee;
+        };
+
+        window.calculateRiderCommission = function(completedCount, totalDeliveryFee) {
+            let rate = 0;
+            if (completedCount > 30) {
+                rate = 80;
+            } else if (completedCount > 20) {
+                rate = 75;
+            } else if (completedCount > 0) {
+                rate = 70;
+            }
+            const amount = (totalDeliveryFee * rate) / 100;
+            return { rate, amount };
         };
 
         window.calculatePendingShopPay = function(order) {
@@ -1867,12 +1886,16 @@
                 const myOrders = window.ordersData.filter(o => o.rider === window.currentRiderName);
                 const myCompleted = myOrders.filter(o => o.status === 'ပို့ဆောင်ပြီး');
 
+                const totalDelivFeeCollected = myCompleted.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
+                const commissionInfo = window.calculateRiderCommission(myCompleted.length, totalDelivFeeCollected);
+
                 const countEl = document.getElementById('riderPersonalCount');
                 const collectedEl = document.getElementById('riderPersonalCollectedItem');
                 const staffPrePayEl = document.getElementById('riderPersonalStaffPrePay');
                 const officePrePayEl = document.getElementById('riderPersonalOfficePrePay');
                 const handoverEl = document.getElementById('riderPersonalHandover');
                 const feeHandoverEl = document.getElementById('riderPersonalFeeHandover');
+                const commissionEl = document.getElementById('riderPersonalCommission');
                 const pendingShopPayEl = document.getElementById('riderPersonalPendingShopPay');
 
                 if (countEl) countEl.innerText = `${myCompleted.length} စောင်`;
@@ -1881,6 +1904,7 @@
                 if (officePrePayEl) officePrePayEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateOfficePrePayItem(o), 0).toLocaleString()} MMK`;
                 if (handoverEl) handoverEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateRiderHandoverToOffice(o), 0).toLocaleString()} MMK`;
                 if (feeHandoverEl) feeHandoverEl.innerText = `${myCompleted.reduce((sum, o) => sum + window.calculateRiderFeeHandoverToOffice(o), 0).toLocaleString()} MMK`;
+                if (commissionEl) commissionEl.innerText = `${commissionInfo.amount.toLocaleString()} MMK (${commissionInfo.rate}%)`;
                 if (pendingShopPayEl) pendingShopPayEl.innerText = `${myOrders.reduce((sum, o) => sum + window.calculatePendingShopPay(o), 0).toLocaleString()} MMK`;
             }
 
@@ -1944,8 +1968,10 @@
                     const officePrePay = myCompletedOrders.reduce((sum, o) => sum + window.calculateOfficePrePayItem(o), 0);
                     const itemHandover = myCompletedOrders.reduce((sum, o) => sum + window.calculateRiderHandoverToOffice(o), 0);
                     
-                    const totalDelivFeeCollected = myCompletedOrders.reduce((sum, o) => sum + window.calculateCollectedDeliveryFee(o), 0);
+                    const totalDelivFeeCollected = myCompletedOrders.reduce((sum, o) => sum + (parseInt(o.deliveryFee) || 0), 0);
                     const delivFeeHandover = myCompletedOrders.reduce((sum, o) => sum + window.calculateRiderFeeHandoverToOffice(o), 0);
+
+                    const commissionInfo = window.calculateRiderCommission(count, totalDelivFeeCollected);
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-gray-50 border-b";
@@ -1955,55 +1981,139 @@
                         <td class="p-2.5 text-right font-bold text-gray-700">${totalCollected.toLocaleString()} MMK</td>
                         <td class="p-2.5 text-right text-purple-700">${staffPrePay.toLocaleString()} MMK</td>
                         <td class="p-2.5 text-right text-sky-700">${officePrePay.toLocaleString()} MMK</td>
-                        <td class="p-2.5 text-right font-bold text-amber-900 bg-amber-50">${itemHandover.toLocaleString()} MMK</td>
-                        <td class="p-2.5 text-right font-bold text-gray-700">${totalDelivFeeCollected.toLocaleString()} MMK</td>
-                        <td class="p-2.5 text-right font-bold text-emerald-900 bg-emerald-50">${delivFeeHandover.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold bg-amber-50 text-amber-900">${itemHandover.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right text-emerald-800 font-bold">${totalDelivFeeCollected.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold bg-emerald-50 text-emerald-900">${delivFeeHandover.toLocaleString()} MMK</td>
+                        <td class="p-2.5 text-right font-bold text-indigo-700 bg-indigo-50">${commissionInfo.rate}%</td>
+                        <td class="p-2.5 text-right font-bold text-indigo-900 bg-indigo-100">${commissionInfo.amount.toLocaleString()} MMK</td>
                     `;
                     riderSummaryTbody.appendChild(tr);
                 });
             }
 
-            const shopSummaryTbody = document.getElementById('shopSummaryChartTable');
-            if (shopSummaryTbody) {
-                shopSummaryTbody.innerHTML = '';
-                const shopMap = {};
-
-                window.ordersData.forEach(o => {
-                    if (o.status === 'အော်ဒါပယ်ဖျက်') return;
-                    const shopName = o.sender || 'အထွေထွေ ဆိုင်များ';
-                    if (!shopMap[shopName]) {
-                        shopMap[shopName] = {
-                            count: 0,
-                            totalItemPrice: 0,
-                            pendingShopPay: 0,
-                            totalDeliveryFee: 0
-                        };
-                    }
-                    shopMap[shopName].count += 1;
-                    shopMap[shopName].totalItemPrice += (parseInt(o.itemPrice) || 0);
-                    shopMap[shopName].pendingShopPay += window.calculatePendingShopPay(o);
-                    shopMap[shopName].totalDeliveryFee += (parseInt(o.deliveryFee) || 0);
-                });
-
-                Object.keys(shopMap).forEach(sName => {
-                    const data = shopMap[sName];
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-gray-50 border-b";
-                    tr.innerHTML = `
-                        <td class="p-2.5 font-bold text-purple-950"><i class="fa-solid fa-store text-purple-600"></i> ${sName}</td>
-                        <td class="p-2.5 text-center font-bold text-indigo-900">${data.count} စောင်</td>
-                        <td class="p-2.5 text-right font-bold text-gray-700">${data.totalItemPrice.toLocaleString()} MMK</td>
-                        <td class="p-2.5 text-right font-bold text-rose-900 bg-rose-50">${data.pendingShopPay.toLocaleString()} MMK</td>
-                        <td class="p-2.5 text-right font-bold text-emerald-800">${data.totalDeliveryFee.toLocaleString()} MMK</td>
-                    `;
-                    shopSummaryTbody.appendChild(tr);
-                });
+            // Render Rider Personal Table & Available Orders Table
+            if (window.loggedInRole === 'rider') {
+                window.renderRiderTables();
             }
 
             if (window.loggedInRole === 'admin') {
                 window.renderAdminTable();
             }
         };
+
+        window.renderRiderTables = function() {
+            const availTbody = document.getElementById('availableOrdersTableBody');
+            const personalTbody = document.getElementById('riderPersonalTableBody');
+
+            if (availTbody) {
+                availTbody.innerHTML = '';
+                const unassignedOrders = window.ordersData.filter(o => !o.rider || o.rider === 'Unassigned');
+
+                if (unassignedOrders.length === 0) {
+                    availTbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-400 italic">လက်ရှိ အပ်နှံနိုင်သော အော်ဒါများ မရှိသေးပါ။</td></tr>`;
+                } else {
+                    unassignedOrders.forEach(o => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-amber-50/50 border-b";
+
+                        const alertInfo = window.checkTimeAlert(o);
+
+                        tr.innerHTML = `
+                            <td class="p-2.5 font-bold text-amber-900">${o.code}</td>
+                            <td class="p-2.5">
+                                <div class="font-bold text-gray-800"><i class="fa-solid fa-store text-amber-600"></i> ${o.sender} (${window.formatPhoneLink(o.senderPhone)})</div>
+                                <div class="text-[11px] text-gray-600"><i class="fa-solid fa-location-dot text-red-500"></i> ${window.formatMapAddressLink(o.receiverAddress, o.receiverGps)} (${o.receiver} - ${window.formatPhoneLink(o.receiverPhone)})</div>
+                            </td>
+                            <td class="p-2.5 font-semibold">
+                                <div>Pick: ${o.pickupDateTime || '-'}</div>
+                                <div>Deli: ${o.deliveryDateTime || '-'}</div>
+                                ${alertInfo.badgeHTML}
+                            </td>
+                            <td class="p-2.5 font-bold">
+                                <div>ကုန်ဖိုး: ${(parseInt(o.itemPrice)||0).toLocaleString()} MMK</div>
+                                <div class="text-emerald-700">ဒလီခ: ${(parseInt(o.deliveryFee)||0).toLocaleString()} MMK</div>
+                            </td>
+                            <td class="p-2.5">
+                                <div class="font-bold text-emerald-800 text-[11px]">${o.paymentType || '-'}</div>
+                                <div class="text-[10px] text-gray-600">${o.payer || '-'}</div>
+                            </td>
+                            <td class="p-2.5">${window.getPaymentBadge(o.payment)}</td>
+                            <td class="p-2.5">${window.getShopPrePayBadge(o.shopPrePayer, o.payerType)}</td>
+                            <td class="p-2.5 text-center">${window.getPriorityBadge(o.priority)}</td>
+                            <td class="p-2.5 text-gray-600 italic">${o.remark || '-'}</td>
+                            <td class="p-2.5 text-center">
+                                <button onclick="selfAssignRider('${o.code}')" class="bg-amber-500 text-gray-900 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-600 shadow text-xs flex items-center gap-1 mx-auto">
+                                    <i class="fa-solid fa-hand-holding-hand"></i> လက်ခံမည်
+                                </button>
+                            </td>
+                        `;
+                        availTbody.appendChild(tr);
+                    });
+                }
+            }
+
+            if (personalTbody) {
+                personalTbody.innerHTML = '';
+                const myOrders = window.ordersData.filter(o => o.rider === window.currentRiderName);
+
+                if (myOrders.length === 0) {
+                    personalTbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-400 italic">သင် လက်ခံထားသော အော်ဒါများ မရှိသေးပါ။</td></tr>`;
+                } else {
+                    myOrders.forEach(o => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-gray-50 border-b";
+
+                        const alertInfo = window.checkTimeAlert(o);
+
+                        tr.innerHTML = `
+                            <td class="p-3 font-bold text-indigo-900">
+                                ${o.code}<br>
+                                <span class="mt-1 inline-block">${window.getPriorityBadge(o.priority)}</span>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-bold text-gray-800"><i class="fa-solid fa-store text-amber-600"></i> ${o.sender} (${window.formatPhoneLink(o.senderPhone)})</div>
+                                <div class="text-[11px] text-gray-600"><i class="fa-solid fa-location-dot text-red-500"></i> ${window.formatMapAddressLink(o.receiverAddress, o.receiverGps)} (${o.receiver} - ${window.formatPhoneLink(o.receiverPhone)})</div>
+                            </td>
+                            <td class="p-3 font-semibold">
+                                <div>Pick: ${o.pickupDateTime || '-'}</div>
+                                <div>Deli: ${o.deliveryDateTime || '-'}</div>
+                                ${alertInfo.badgeHTML}
+                            </td>
+                            <td class="p-3 font-bold">
+                                <div>ကုန်ဖိုး: ${(parseInt(o.itemPrice)||0).toLocaleString()} MMK</div>
+                                <div class="text-emerald-700">ဒလီခ: ${(parseInt(o.deliveryFee)||0).toLocaleString()} MMK</div>
+                                <div class="text-indigo-900 text-[10px]">ကောက်ရရှိ: ${window.calculateCollectedItemPrice(o).toLocaleString()} MMK</div>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-bold text-emerald-800 text-[11px]">${o.paymentType || '-'}</div>
+                                <div class="text-[10px] text-gray-600">${o.payer || '-'}</div>
+                            </td>
+                            <td class="p-3">${window.getPaymentBadge(o.payment)}</td>
+                            <td class="p-3">${window.getShopPrePayBadge(o.shopPrePayer, o.payerType)}</td>
+                            <td class="p-3 text-gray-600 italic">${o.remark || '-'}</td>
+                            <td class="p-3 text-center">
+                                <select onchange="updateOrderStatus('${o.code}', this.value)" class="p-1.5 border rounded text-xs font-bold bg-gray-50">
+                                    <option value="အပ်နှံ" ${o.status === 'အပ်နှံ' ? 'selected' : ''}>အပ်နှံ</option>
+                                    <option value="လက်ခံ" ${o.status === 'လက်ခံ' ? 'selected' : ''}>လက်ခံ</option>
+                                    <option value="ကောက်ယူ" ${o.status === 'ကောက်ယူ' ? 'selected' : ''}>ကောက်ယူ</option>
+                                    <option value="စတင်ပို့ဆောင်" ${o.status === 'စတင်ပို့ဆောင်' ? 'selected' : ''}>စတင်ပို့ဆောင်</option>
+                                    <option value="ပို့ဆောင်ပြီး" ${o.status === 'ပို့ဆောင်ပြီး' ? 'selected' : ''}>ပို့ဆောင်ပြီး</option>
+                                    <option value="ပို့ရန်ကျန်" ${o.status === 'ပို့ရန်ကျန်' ? 'selected' : ''}>ပို့ရန်ကျန်</option>
+                                    <option value="အော်ဒါပယ်ဖျက်" ${o.status === 'အော်ဒါပယ်ဖျက်' ? 'selected' : ''}>အော်ဒါပယ်ဖျက်</option>
+                                </select>
+                            </td>
+                            <td class="p-3 text-center">
+                                <button onclick="openRiderEditModal('${o.code}')" class="bg-amber-500 hover:bg-amber-600 text-white p-1.5 rounded shadow" title="Edit Remarks & Info">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </td>
+                        `;
+                        personalTbody.appendChild(tr);
+                    });
+                }
+            }
+        };
+
     </script>
 </body>
 </html>
